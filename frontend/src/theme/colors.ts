@@ -1,0 +1,17 @@
+export const acsColors = {
+  bgPrimary: '#0B0E14',
+  bgSecondary: '#111827',
+  bgCard: '#1e293b',
+  bgInput: '#1F2937',
+  bgSidebar: '#0B0E14',
+  accent: '#22D3EE',
+  accentHover: '#38bdf8',
+  textPrimary: '#F9FAFB',
+  textSecondary: '#94a3b8',
+  textMuted: '#9CA3AF',
+  border: '#334155',
+  borderSubtle: '#1f2937',
+  success: '#10B981',
+  warning: '#f59e0b',
+  error: '#ef4444',
+};

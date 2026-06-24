@@ -1,0 +1,19 @@
+{
+  "name": "routergui-virtual-cpe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RouterGui Virtual CPE - TR-069 compatible router simulator",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "db:generate": "pnpm --filter backend prisma generate",
+    "db:migrate": "pnpm --filter backend prisma migrate dev",
+    "db:seed": "pnpm --filter backend prisma db seed"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@prisma/client", "@prisma/engines", "esbuild", "prisma"]
+  }
+}

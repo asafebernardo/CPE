@@ -1,0 +1,57 @@
+/* Scrollbar — ACS dark theme (Firefox + Chromium) */
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #0b0e14;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #111827;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0b0e14;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+  border: 2px solid #0b0e14;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #22d3ee;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: #38bdf8;
+}
+
+*::-webkit-scrollbar-corner {
+  background: #0b0e14;
+}
+
+/* Sidebar drawer scroll */
+.MuiDrawer-paper {
+  scrollbar-color: #334155 #0b0e14;
+}
+
+.MuiDrawer-paper::-webkit-scrollbar-track {
+  background: #0b0e14;
+}
+
+.MuiDrawer-paper::-webkit-scrollbar-thumb {
+  border-color: #0b0e14;
+}
+
+/* Table containers */
+.MuiTableContainer-root::-webkit-scrollbar-thumb:hover {
+  background: #22d3ee;
+}
