@@ -4,7 +4,7 @@ import {
   evaluatePasswordStrength,
   type PolicyValidation,
   type PasswordStrengthResult,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 
 /**
  * Central password policy engine for admin and Wi-Fi credentials.

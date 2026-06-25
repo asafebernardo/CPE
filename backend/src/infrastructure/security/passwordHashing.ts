@@ -1,7 +1,7 @@
 import { createHash, pbkdf2Sync, randomBytes, timingSafeEqual } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { argon2i, argon2id, argon2Verify } from 'hash-wasm';
-import type { PasswordHashAlgorithm } from '@routergui/shared';
+import type { PasswordHashAlgorithm } from '@aerobrry/shared';
 
 /**
  * Produces a stored-password representation for the given algorithm.

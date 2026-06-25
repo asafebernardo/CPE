@@ -14,6 +14,7 @@ export * from './types/firewall.js';
 export * from './types/websocket.js';
 export * from './types/cpe.js';
 export * from './types/operational.js';
+export * from './types/capabilities.js';
 export * from './types/wan.js';
 export * from './types/auth.js';
 export * from './types/user.js';

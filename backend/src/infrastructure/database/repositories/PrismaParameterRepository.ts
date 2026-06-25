@@ -1,6 +1,6 @@
 import type { IParameterRepository } from '../../../domain/services/IParameterTreeService.js';
 import type { Tr098ParameterEntity } from '../../../domain/entities/Tr098Parameter.js';
-import type { ParameterType } from '@routergui/shared';
+import type { ParameterType } from '@aerobrry/shared';
 import { prisma } from '../prisma.js';
 
 export class PrismaParameterRepository implements IParameterRepository {

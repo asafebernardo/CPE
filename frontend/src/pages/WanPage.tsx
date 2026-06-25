@@ -17,7 +17,7 @@ import { SubTabs } from '../components/dashboard/home/SubTabs';
 import { useWanStore } from '../stores/wanStore';
 import { useUiStore } from '../stores/uiStore';
 import { WAN_TABS } from '../navigation/wanTabs';
-import type { WanDashboardDto } from '@routergui/shared';
+import type { WanDashboardDto } from '@aerobrry/shared';
 import { acsColors } from '../theme/colors';
 
 export function WanPage({ embedded = false }: { embedded?: boolean }) {

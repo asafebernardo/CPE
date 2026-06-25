@@ -1,4 +1,4 @@
-import type { LogType } from '@routergui/shared';
+import type { LogType } from '@aerobrry/shared';
 
 export interface LogEntryEntity {
   id: string;

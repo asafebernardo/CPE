@@ -3,7 +3,7 @@ import { Button, Card, CardContent, CircularProgress, Grid, Typography } from '@
 import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
 import { DataTable } from '../common/DataTable';
-import type { SpeedTestResultDto } from '@routergui/shared';
+import type { SpeedTestResultDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 export function SpeedTestPanel() {

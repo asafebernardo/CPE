@@ -1,23 +1,20 @@
 /**
- * Default theme — OLED pure black enterprise palette.
- *
- * Concrete values for MUI palette math. Mirrored into `--acs-*` CSS variables
- * in tokens.css when the default theme is active.
+ * Operational charcoal palette — mirrored in tokens.css
  */
 export const defaultColors = {
-  bgPrimary: '#000000',
-  bgSecondary: '#050505',
-  bgCard: '#111111',
-  bgInput: '#0A0A0A',
-  bgSidebar: '#0A0A0A',
-  accent: '#38BDF8',
-  accentHover: '#60A5FA',
-  textPrimary: '#F9FAFB',
-  textSecondary: '#94A3B8',
-  textMuted: '#64748B',
-  border: 'rgba(255,255,255,0.04)',
+  bgPrimary: '#07090C',
+  bgSecondary: '#0C0F14',
+  bgCard: '#101419',
+  bgInput: '#0A0D11',
+  bgSidebar: '#0A0D11',
+  accent: '#5EB8D4',
+  accentHover: '#7ECCE3',
+  textPrimary: '#E8EAED',
+  textSecondary: '#9AA3AD',
+  textMuted: '#5C6570',
+  border: 'rgba(255,255,255,0.07)',
   borderSubtle: 'rgba(255,255,255,0.04)',
-  success: '#22C55E',
-  warning: '#F59E0B',
-  error: '#EF4444',
+  success: '#3DD68C',
+  warning: '#E5A045',
+  error: '#E05252',
 } as const;

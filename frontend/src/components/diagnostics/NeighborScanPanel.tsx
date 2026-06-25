@@ -3,7 +3,7 @@ import { Box, Button } from '@mui/material';
 import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
 import { DataTable } from '../common/DataTable';
-import type { WifiNeighborDto } from '@routergui/shared';
+import type { WifiNeighborDto } from '@aerobrry/shared';
 
 export function NeighborScanPanel() {
   const [neighbors, setNeighbors] = useState<WifiNeighborDto[]>([]);

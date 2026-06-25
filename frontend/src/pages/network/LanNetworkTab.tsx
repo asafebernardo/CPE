@@ -3,7 +3,7 @@ import { Box, TextField, Button, Grid, Switch, FormControlLabel, Alert } from '@
 import api from '../../services/api';
 import { ProfessionalTable } from '../../components/common/ProfessionalTable';
 import { FormSection } from '../../components/common/FormSection';
-import type { LanConfigDto } from '@routergui/shared';
+import type { LanConfigDto } from '@aerobrry/shared';
 
 export function LanNetworkTab() {
   const [config, setConfig] = useState<LanConfigDto>({

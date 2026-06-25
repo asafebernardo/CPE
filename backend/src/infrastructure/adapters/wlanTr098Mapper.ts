@@ -1,4 +1,4 @@
-import { TR098_ROOT } from '@routergui/shared';
+import { TR098_ROOT } from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 
 const WLAN_PATH =

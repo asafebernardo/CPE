@@ -1,6 +1,6 @@
 import type { ILogRepository } from '../../../domain/repositories/ILogRepository.js';
 import type { LogEntryEntity } from '../../../domain/entities/LogEntry.js';
-import type { LogType } from '@routergui/shared';
+import type { LogType } from '@aerobrry/shared';
 import { prisma } from '../prisma.js';
 
 export class PrismaLogRepository implements ILogRepository {

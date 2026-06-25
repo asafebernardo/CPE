@@ -1,4 +1,4 @@
-# RouterGui Virtual CPE — Checklist de implementação
+# AeroBerry Virtual CPE — Checklist de implementação
 
 Objetivo: cobrir funcionalidades típicas de CPE residencial/ONT em **simulação funcional**.
 

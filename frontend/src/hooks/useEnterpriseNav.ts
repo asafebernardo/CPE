@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useUiStore } from '../stores/uiStore';
+import { useCapabilitiesStore } from '../os/capabilities/capabilitiesStore';
+import { filterNavByCapabilities, getProfileSectionOrder } from '../os/modules/moduleRegistry';
 import {
   MAIN_SECTIONS,
   getSectionForPath,
@@ -31,20 +33,27 @@ export function useEnterpriseNav() {
   const location = useLocation();
   const role = useAuthStore((s) => s.user?.role ?? 'USER');
   const canAccess = useUiStore((s) => s.canAccess);
+  const uiMode = useUiStore((s) => s.uiMode);
+  const capabilities = useCapabilitiesStore((s) => s.capabilities);
 
-  const filterItem = (item: NavItem) => canAccess(item.minRole, item.advancedOnly, role);
+  const filterItem = (item: NavItem) => {
+    if (!canAccess(item.minRole, item.advancedOnly, role)) return false;
+    const filtered = filterNavByCapabilities([item], capabilities, uiMode);
+    return filtered.length > 0;
+  };
 
-  const visibleSections = useMemo(
-    () =>
-      MAIN_SECTIONS
-        .filter((s) => canAccess(s.minRole, s.advancedOnly, role))
-        .map((section) => ({
-          ...section,
-          items: filterSectionEntries(section.items, filterItem),
-        }))
-        .filter((s) => s.items.length > 0),
-    [role, canAccess],
-  );
+  const visibleSections = useMemo(() => {
+    const sections = MAIN_SECTIONS
+      .filter((s) => canAccess(s.minRole, s.advancedOnly, role))
+      .map((section) => ({
+        ...section,
+        items: filterSectionEntries(section.items, filterItem),
+      }))
+      .filter((s) => s.items.length > 0);
+
+    const order = getProfileSectionOrder(capabilities?.profile ?? 'generic');
+    return [...sections].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  }, [role, canAccess, capabilities, uiMode]);
 
   const activeSectionId: MainSectionId = getSectionForPath(location.pathname);
 

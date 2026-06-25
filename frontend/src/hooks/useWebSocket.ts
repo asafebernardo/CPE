@@ -3,7 +3,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useDashboardStore } from '../stores/dashboardStore';
 import { useLogsStore } from '../stores/logsStore';
 import { useOperationalStore } from '../stores/operationalStore';
-import type { ConnectedHostDto, WanStatsPayload } from '@routergui/shared';
+import type { ConnectedHostDto, WanStatsPayload, TopologyUpdatePayload, ThroughputTickPayload } from '@aerobrry/shared';
 import { useWanStore } from '../stores/wanStore';
 
 export function useWebSocket() {
@@ -58,6 +58,32 @@ export function useWebSocket() {
           }
         } else if (msg.type === 'hosts.updated') {
           setHosts(msg.payload);
+        } else if (msg.type === 'topology.update') {
+          const payload = msg.payload as TopologyUpdatePayload;
+          const opData = useOperationalStore.getState().data;
+          if (opData?.topology) {
+            useOperationalStore.getState().setData({
+              ...opData,
+              topology: { ...opData.topology, graph: payload.graph },
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        } else if (msg.type === 'throughput.tick') {
+          const payload = msg.payload as ThroughputTickPayload;
+          const opData = useOperationalStore.getState().data;
+          if (opData?.topology?.graph) {
+            const edges = opData.topology.graph.edges.map((e) => {
+              const tick = payload.edges.find((t) => t.id === e.id);
+              return tick ? { ...e, traffic: tick.traffic } : e;
+            });
+            useOperationalStore.getState().setData({
+              ...opData,
+              topology: {
+                ...opData.topology,
+                graph: { ...opData.topology.graph, edges },
+              },
+            });
+          }
         }
       } catch {
         // ignore

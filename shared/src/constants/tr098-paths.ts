@@ -29,7 +29,7 @@ export const TR098_TIME = {
   STATUS: `${TR098_ROOT}.Time.Status`,
 } as const;
 
-/** Vendor extensions used by IXC presets and RouterGui GUI sync */
+/** Vendor extensions used by IXC presets and AeroBerry GUI sync */
 export const TR098_X_ROUTERGUI = {
   WAN_DNS_AUTO: `${TR098_ROOT}.X_RouterGui_WANDNSAuto`,
   LAN_DNS_AUTO: `${TR098_ROOT}.X_RouterGui_LANDNSAuto`,

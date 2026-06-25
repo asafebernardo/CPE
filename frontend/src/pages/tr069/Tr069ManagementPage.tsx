@@ -3,8 +3,8 @@ import { Box, Grid, TextField, Switch, FormControlLabel, Button, Alert, Circular
 import api from '../../services/api';
 import { PageHeader } from '../../components/common/PageHeader';
 import { FormSection } from '../../components/common/FormSection';
-import type { Tr069ManagementDto, CredentialEncryptionType } from '@routergui/shared';
-import { CREDENTIAL_ENCRYPTION_TYPES, getCredentialEncryption, MIN_PERIODIC_INFORM_INTERVAL_SEC } from '@routergui/shared';
+import type { Tr069ManagementDto, CredentialEncryptionType } from '@aerobrry/shared';
+import { CREDENTIAL_ENCRYPTION_TYPES, getCredentialEncryption, MIN_PERIODIC_INFORM_INTERVAL_SEC } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 import { SecuritySelect } from '../../components/security/SecuritySelect';
 import { PasswordField } from '../../components/common/PasswordField';

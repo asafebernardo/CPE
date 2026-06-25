@@ -1,13 +1,13 @@
-# RouterGui Virtual CPE — Architecture
+# AeroBerry Virtual CPE — Architecture
 
 ## Overview
 
-RouterGui Virtual CPE is a monorepo simulating a TR-069 compatible residential router (RGX-5000). It follows Clean Architecture with clear separation between presentation, application, domain, and infrastructure layers.
+AeroBerry Virtual CPE is a monorepo simulating a TR-069 compatible residential router (RGX-5000). It follows Clean Architecture with clear separation between presentation, application, domain, and infrastructure layers.
 
 ## Monorepo Structure
 
 ```
-RouterGui/
+AeroBerry/
 ├── shared/     # TypeScript types, TR-098 constants, serial generator
 ├── backend/    # Express API, CWMP client, Prisma/SQLite, WebSocket
 ├── frontend/   # React + Vite + MUI router GUI

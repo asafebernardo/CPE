@@ -1,5 +1,5 @@
 import { MenuItem, TextField, type TextFieldProps } from '@mui/material';
-import { PROTOCOL_OPTIONS, type ProtocolOption } from '@routergui/shared';
+import { PROTOCOL_OPTIONS, type ProtocolOption } from '@aerobrry/shared';
 
 type Props = Omit<TextFieldProps, 'select' | 'value' | 'onChange'> & {
   value: ProtocolOption;

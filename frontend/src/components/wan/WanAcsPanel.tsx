@@ -1,5 +1,5 @@
 import { Card, CardContent, Typography, Grid } from '@mui/material';
-import type { WanAcsConnectivityDto } from '@routergui/shared';
+import type { WanAcsConnectivityDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 export function WanAcsPanel({ acs }: { acs: WanAcsConnectivityDto }) {

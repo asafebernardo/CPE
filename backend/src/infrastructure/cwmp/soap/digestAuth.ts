@@ -79,7 +79,7 @@ export function buildDigestAuthHeader(
   return `Digest ${parts.join(', ')}`;
 }
 
-const CR_REALM = 'RouterGui';
+const CR_REALM = 'AeroBerry';
 
 /**
  * Builds a `WWW-Authenticate: Digest ...` challenge header for the CPE-side

@@ -1,4 +1,4 @@
-import { TR098_X_ROUTERGUI, type CwmpParameterValue } from '@routergui/shared';
+import { TR098_X_ROUTERGUI, type CwmpParameterValue } from '@aerobrry/shared';
 
 export interface OpticalTr098Source {
   rxPowerDbm: number;

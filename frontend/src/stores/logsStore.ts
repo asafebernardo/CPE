@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { LogEntryDto } from '@routergui/shared';
+import type { LogEntryDto } from '@aerobrry/shared';
 
 interface LogsState {
   entries: LogEntryDto[];

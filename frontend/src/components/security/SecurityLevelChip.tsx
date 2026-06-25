@@ -1,5 +1,5 @@
 import { Chip } from '@mui/material';
-import { SECURITY_LEVELS, type SecurityLevel } from '@routergui/shared';
+import { SECURITY_LEVELS, type SecurityLevel } from '@aerobrry/shared';
 
 export function SecurityLevelChip({ level, size = 'small' }: { level: SecurityLevel; size?: 'small' | 'medium' }) {
   const meta = SECURITY_LEVELS[level];

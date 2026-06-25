@@ -6,18 +6,22 @@ import type { DeviceSimulatorService } from '../../application/services/DeviceSi
 
 import type { CpeSimulatorService } from '../../application/services/CpeSimulatorService.js';
 import type { WanOperationalService } from '../../application/services/WanOperationalService.js';
+import type { OperationalDashboardService } from '../../application/services/OperationalDashboardService.js';
+import { tickEdgeTraffic } from '../../application/services/topologyGraphBuilder.js';
 
 export class WebSocketHub {
   private wss: WebSocketServer | null = null;
   private clients: Set<WebSocket> = new Set();
   private metricsInterval: ReturnType<typeof setInterval> | null = null;
   private hostsInterval: ReturnType<typeof setInterval> | null = null;
+  private topologyInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private readonly authService: AuthService,
     private readonly simulator: DeviceSimulatorService,
     private readonly cpeSimulator: CpeSimulatorService,
     private readonly wanOperational: WanOperationalService,
+    private readonly operationalService: OperationalDashboardService,
     private readonly eventBus: EventEmitter,
     private readonly getDefaultDeviceId: () => Promise<string | null>,
   ) {}
@@ -55,6 +59,20 @@ export class WebSocketHub {
     this.startMetricsTicker();
     this.startHostsTicker();
     this.startWanTicker();
+    this.startTopologyTicker();
+  }
+
+  private startTopologyTicker() {
+    this.topologyInterval = setInterval(async () => {
+      const deviceId = await this.getDefaultDeviceId();
+      if (!deviceId) return;
+      const graph = await this.operationalService.getTopologyGraph(deviceId);
+      const ticked = tickEdgeTraffic(graph);
+      this.broadcast('topology.update', { graph: ticked });
+      this.broadcast('throughput.tick', {
+        edges: ticked.edges.map((e) => ({ id: e.id, traffic: e.traffic })),
+      });
+    }, 500);
   }
 
   private startWanTicker() {
@@ -95,6 +113,7 @@ export class WebSocketHub {
   destroy() {
     if (this.metricsInterval) clearInterval(this.metricsInterval);
     if (this.hostsInterval) clearInterval(this.hostsInterval);
+    if (this.topologyInterval) clearInterval(this.topologyInterval);
     if (this.wss) this.wss.close();
   }
 }

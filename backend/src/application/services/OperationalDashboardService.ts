@@ -6,14 +6,15 @@ import type {
   Tr098ParameterNodeDto,
   PonStatusDto,
   ConnectedHostExtendedDto,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import type { IDeviceRepository } from '../../domain/repositories/IDeviceRepository.js';
 import type { ParameterTreeService } from './ParameterTreeService.js';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { getConnectionRequestInfo } from '../../config/connectionRequest.js';
+import { buildTopologyGraph } from './topologyGraphBuilder.js';
 
 const VENDOR_MAP: Record<string, string> = {
-  'AA:BB': 'RouterGui',
+  'AA:BB': 'AeroBerry',
   '00:1A': 'Intelbras',
   'B8:27': 'Raspberry',
 };
@@ -65,6 +66,22 @@ export class OperationalDashboardService {
       acsSessionActive: session?.sessionState === 'active',
     });
 
+    const meshCount = await prisma.wirelessInterface.count({
+      where: { deviceId, interfaceType: 'mesh_backhaul', enabled: true },
+    });
+
+    const graph = buildTopologyGraph({
+      modelName: device?.modelName ?? 'RGX-5000',
+      wanConnected,
+      lanClients,
+      wifi24Clients,
+      wifi5Clients,
+      wlan24Enabled: wlan24?.enabled ?? false,
+      wlan5Enabled: wlan5?.enabled ?? false,
+      meshEnabled: meshCount > 0,
+      hosts,
+    });
+
     return {
       updatedAt: new Date().toISOString(),
       internet: { status: wanConnected ? 'online' : 'offline' },
@@ -112,18 +129,24 @@ export class OperationalDashboardService {
         lanClientCount: lanClients,
         wifi24ClientCount: wifi24Clients,
         wifi5ClientCount: wifi5Clients,
+        graph,
       },
       leds,
       device: {
-        manufacturer: device?.manufacturer ?? 'RouterGui',
+        manufacturer: device?.manufacturer ?? 'AeroBerry',
         modelName: device?.modelName ?? 'RGX-5000',
-        osName: device?.osName ?? 'RGOS',
+        osName: device?.osName ?? 'AeroBerry OS',
         softwareVersion: device?.softwareVersion ?? '1.0.0',
         hardwareVersion: device?.hardwareVersion ?? 'RGX-HW-A1',
         serialNumber: device?.serialNumber ?? '',
         uptime,
       },
     };
+  }
+
+  async getTopologyGraph(deviceId: string) {
+    const dashboard = await this.getOperationalDashboard(deviceId);
+    return dashboard.topology.graph!;
   }
 
   private buildLeds(ctx: {
@@ -311,7 +334,7 @@ export class OperationalDashboardService {
     const optical = await prisma.opticalInfo.findUnique({ where: { deviceId } });
     return {
       ponStatus: optical?.ponStatus ?? 'registered',
-      oltVendor: 'RouterGui OLT',
+      oltVendor: 'AeroBerry OLT',
       oltModel: 'RG-OLT-8000',
       opticalRx: optical?.rxPowerDbm ?? -18.5,
       opticalTx: optical?.txPowerDbm ?? 2.1,

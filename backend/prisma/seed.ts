@@ -12,6 +12,7 @@ import {
   DEFAULT_ADMIN_PASSWORD,
   DEFAULT_TECH_PASSWORD,
   DEFAULT_USER_PASSWORD,
+  DEFAULT_CAPABILITIES,
   TR098_ROOT,
   TR098_DEVICE_INFO,
   TR098_MANAGEMENT_SERVER,
@@ -21,7 +22,7 @@ import {
   TR098_WLAN_24_INDEX,
   TR098_WLAN_5_INDEX,
   generateSerialNumber,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 
 const prisma = new PrismaClient();
 
@@ -110,6 +111,14 @@ async function main() {
       hardwareVersion: DEVICE_HARDWARE_VERSION,
       serialNumber: serial,
       osName: DEVICE_OS,
+      capabilitiesJson: JSON.stringify({
+        ...DEFAULT_CAPABILITIES,
+        mesh: true,
+        vpn: true,
+        tr069: true,
+        qos: true,
+        profile: 'enterprise',
+      }),
     },
   });
 

@@ -1,0 +1,46 @@
+/* AeroBerry — operational workspace tokens */
+
+:root,
+html[data-theme='default'] {
+  --rgos-layer-0: #07090c;
+  --rgos-layer-1: #0a0d11;
+  --rgos-layer-2: #0e1218;
+  --rgos-layer-3: #12171e;
+  --rgos-layer-4: #161c24;
+
+  --rgos-surface-glass: rgba(16, 20, 25, 0.72);
+  --rgos-border-strong: rgba(255, 255, 255, 0.09);
+
+  --rgos-density-gap: 10px;
+  --rgos-density-padding: 16px;
+  --rgos-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --rgos-font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --rgos-rail-width: 44px;
+  --rgos-context-width: 196px;
+  --rgos-sidebar-width: 280px;
+  --rgos-telemetry-height: 40px;
+}
+
+html[data-ui-mode='advanced'] {
+  --rgos-density-gap: 8px;
+  --rgos-density-padding: 12px;
+  --rgos-context-width: 180px;
+  --rgos-sidebar-width: 260px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rgos-traffic-flow,
+  .rgos-live-dot {
+    animation: none !important;
+  }
+}
+
+@keyframes rgos-traffic-flow {
+  to { stroke-dashoffset: -12; }
+}
+
+@keyframes rgos-live-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}

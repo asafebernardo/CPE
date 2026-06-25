@@ -1,5 +1,5 @@
 /**
- * Central security catalog for the RouterGui Virtual CPE.
+ * Central security catalog for the AeroBerry Virtual CPE.
  *
  * Single source of truth for every Wi-Fi security mode, password hashing
  * algorithm, credential encryption scheme, certificate type and backup

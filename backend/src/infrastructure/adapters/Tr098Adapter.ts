@@ -3,9 +3,9 @@ import {
   TR098_DEVICE_INFO,
   TR098_MANAGEMENT_SERVER,
   TR098_LAN,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import type { IDataModelAdapter } from '../../domain/adapters/IDataModelAdapter.js';
-import type { CwmpParameterValue } from '@routergui/shared';
+import type { CwmpParameterValue } from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { env, connectionRequestUrl } from '../../config/env.js';
 import {

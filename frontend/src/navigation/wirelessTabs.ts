@@ -1,4 +1,4 @@
-import type { UserRole } from '@routergui/shared';
+import type { UserRole } from '@aerobrry/shared';
 
 export type WirelessTabId = 'networks' | 'band-steering' | 'guest' | 'mesh';
 

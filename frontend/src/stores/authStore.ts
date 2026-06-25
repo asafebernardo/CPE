@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import api from '../services/api';
-import type { LoginResponse, UserRole } from '@routergui/shared';
+import type { LoginResponse, UserRole } from '@aerobrry/shared';
 
 interface AuthUser {
   id: string;

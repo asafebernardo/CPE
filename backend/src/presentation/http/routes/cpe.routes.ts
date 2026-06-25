@@ -3,11 +3,12 @@ import multer from 'multer';
 import path from 'node:path';
 import type { CpeSimulatorService } from '../../../application/services/CpeSimulatorService.js';
 import type { PrismaDeviceRepository } from '../../../infrastructure/database/repositories/PrismaDeviceRepository.js';
+import type { CapabilitiesService } from '../../../application/services/CapabilitiesService.js';
 import { prisma } from '../../../infrastructure/database/prisma.js';
 import {
   validateBandSteeringMembership,
   type WirelessInterfaceType,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 
 const FIRMWARE_UPLOAD_EXTENSIONS = new Set(['.bin', '.img', '.trx', '.fw', '.zip']);
 
@@ -110,8 +111,23 @@ export function createWifiAdvancedRoutes(cpe: CpeSimulatorService, deviceRepo: P
   return router;
 }
 
-export function createCpeRoutes(cpe: CpeSimulatorService, deviceRepo: PrismaDeviceRepository) {
+export function createCpeRoutes(
+  cpe: CpeSimulatorService,
+  deviceRepo: PrismaDeviceRepository,
+  capabilitiesService?: CapabilitiesService,
+) {
   const router = Router();
+
+  router.get('/capabilities', async (_req, res, next) => {
+    try {
+      const device = await deviceRepo.findDefault();
+      if (!device) return res.status(404).json({ error: 'Not Found' });
+      if (!capabilitiesService) return res.status(503).json({ error: 'Capabilities service unavailable' });
+      res.json(await capabilitiesService.getCapabilities(device.id));
+    } catch (e) {
+      next(e);
+    }
+  });
 
   router.get('/ipv6', async (_req, res, next) => {
     try {

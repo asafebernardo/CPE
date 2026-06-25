@@ -4,7 +4,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useSecurityStore } from '../../stores/securityStore';
 import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 import { PasswordField } from '../common/PasswordField';
-import { validateAdminPasswordPolicy } from '@routergui/shared';
+import { validateAdminPasswordPolicy } from '@aerobrry/shared';
 
 /**
  * Blocking modal shown after login when the admin must change the default /

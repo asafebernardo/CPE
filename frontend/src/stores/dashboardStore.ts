@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { DashboardResponse } from '@routergui/shared';
+import type { DashboardResponse } from '@aerobrry/shared';
 
 interface DashboardState {
   data: DashboardResponse | null;

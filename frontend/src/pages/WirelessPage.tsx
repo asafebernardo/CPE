@@ -8,7 +8,8 @@ import { WirelessNetworksPanel } from '../components/wifi/WirelessNetworksPanel'
 import { useAuthStore } from '../stores/authStore';
 import { useUiStore } from '../stores/uiStore';
 import { WIRELESS_TABS, parseWirelessPath } from '../navigation/wirelessTabs';
-import { type BandSteeringConfigDto } from '@routergui/shared';
+import { type BandSteeringConfigDto } from '@aerobrry/shared';
+import { useCapabilitiesStore } from '../os/capabilities/capabilitiesStore';
 
 export function WirelessPage() {
   const location = useLocation();
@@ -18,7 +19,12 @@ export function WirelessPage() {
 
   const { tab } = parseWirelessPath(location.pathname);
 
-  const visibleTabs = WIRELESS_TABS.filter((t) => canAccess(t.minRole, false, role));
+  const hasMesh = useCapabilitiesStore((s) => s.hasCapability('mesh'));
+
+  const visibleTabs = WIRELESS_TABS.filter((t) => {
+    if (t.id === 'mesh' && !hasMesh) return false;
+    return canAccess(t.minRole, false, role);
+  });
   const activeTabConfig = WIRELESS_TABS.find((t) => t.id === tab) ?? visibleTabs[0];
   const allowedTab = visibleTabs.some((t) => t.id === tab);
   const fallbackPath = visibleTabs[0]?.path ?? '/';
@@ -72,7 +78,7 @@ export function WirelessPage() {
   }
 
   return (
-    <Box>
+    <Box className="rgos-section-wireless">
       <PageHeader
         title={activeTabConfig?.title ?? 'Wireless'}
         subtitle={activeTabConfig?.description ?? 'Wireless configuration and monitoring.'}

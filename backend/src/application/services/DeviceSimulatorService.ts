@@ -3,7 +3,7 @@ import type {
   PingResponse,
   TracerouteResponse,
   DashboardResponse,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 
 export class DeviceSimulatorService {

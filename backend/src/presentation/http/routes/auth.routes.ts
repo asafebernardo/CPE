@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { validateAdminPasswordPolicy } from '@routergui/shared';
+import { validateAdminPasswordPolicy } from '@aerobrry/shared';
 import type { AuthService } from '../../../application/services/AuthService.js';
 import type { LogService } from '../../../application/services/LogService.js';
 import type { SecurityService } from '../../../application/services/SecurityService.js';

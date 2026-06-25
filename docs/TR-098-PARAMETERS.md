@@ -1,12 +1,12 @@
 # TR-098 Parameters (v1)
 
-Initial parameter tree seeded for RouterGui RGX-5000.
+Initial parameter tree seeded for AeroBerry RGX-5000.
 
 ## DeviceInfo
 
 | Path | Default | Writable |
 |------|---------|----------|
-| InternetGatewayDevice.DeviceInfo.Manufacturer | RouterGui | No |
+| InternetGatewayDevice.DeviceInfo.Manufacturer | AeroBerry | No |
 | InternetGatewayDevice.DeviceInfo.ModelName | RGX-5000 | No |
 | InternetGatewayDevice.DeviceInfo.SoftwareVersion | 1.0.0 | No |
 | InternetGatewayDevice.DeviceInfo.HardwareVersion | RGX-HW-A1 | No |

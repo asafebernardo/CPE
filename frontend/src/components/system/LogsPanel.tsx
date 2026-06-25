@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import api from '../../services/api';
 import { ProfessionalTable } from '../common/ProfessionalTable';
-import type { LogEntryDto } from '@routergui/shared';
+import type { LogEntryDto } from '@aerobrry/shared';
 
 const CATEGORIES = [
   { key: 'system', label: 'System Logs', types: ['SYSTEM', 'DIAGNOSTIC'] },

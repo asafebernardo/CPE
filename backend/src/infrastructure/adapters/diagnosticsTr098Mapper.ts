@@ -1,4 +1,4 @@
-import { TR098_DIAGNOSTICS, type CwmpParameterValue } from '@routergui/shared';
+import { TR098_DIAGNOSTICS, type CwmpParameterValue } from '@aerobrry/shared';
 
 export interface DiagnosticsState {
   ipPing: {

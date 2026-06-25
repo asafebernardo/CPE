@@ -4,7 +4,7 @@ import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
 import { SecuritySelect } from '../security/SecuritySelect';
 import { useSecurityStore } from '../../stores/securityStore';
-import { BACKUP_ENCRYPTION_TYPES, getBackupEncryption, type BackupEncryptionType } from '@routergui/shared';
+import { BACKUP_ENCRYPTION_TYPES, getBackupEncryption, type BackupEncryptionType } from '@aerobrry/shared';
 
 export function BackupPanel() {
   const [backups, setBackups] = useState<Array<{ id: string; label: string; createdAt: string }>>([]);

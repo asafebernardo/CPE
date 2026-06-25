@@ -1,6 +1,6 @@
 import { TextField, MenuItem, Box, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import type { SecurityLevel } from '@routergui/shared';
+import type { SecurityLevel } from '@aerobrry/shared';
 import { SecurityLevelChip } from './SecurityLevelChip';
 
 export interface SecurityOption {

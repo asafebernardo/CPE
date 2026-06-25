@@ -1,8 +1,11 @@
 import type { WanStatisticsDto, WanQualityDto, WanStatusPanelDto } from './wan.js';
+import type { TopologyGraphDto } from './operational.js';
 
 export type WebSocketEventType =
   | 'dashboard.metrics'
   | 'wan.stats'
+  | 'topology.update'
+  | 'throughput.tick'
   | 'log.new'
   | 'cwmp.session.started'
   | 'cwmp.session.completed'
@@ -38,4 +41,12 @@ export interface LogNewPayload {
   type: string;
   message: string;
   createdAt: string;
+}
+
+export interface TopologyUpdatePayload {
+  graph: TopologyGraphDto;
+}
+
+export interface ThroughputTickPayload {
+  edges: Array<{ id: string; traffic: number }>;
 }

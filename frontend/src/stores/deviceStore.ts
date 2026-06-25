@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { WanConfigDto, LanConfigDto } from '@routergui/shared';
+import type { WanConfigDto, LanConfigDto } from '@aerobrry/shared';
 
 interface DeviceState {
   wan: WanConfigDto | null;

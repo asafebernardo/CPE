@@ -1,5 +1,5 @@
 import { generateKeyPairSync, createHash, randomBytes } from 'crypto';
-import { getCertificateType, type CertificateType } from '@routergui/shared';
+import { getCertificateType, type CertificateType } from '@aerobrry/shared';
 
 export interface GeneratedCertificate {
   type: CertificateType;
@@ -52,8 +52,8 @@ export function generateCertificate(typeId: CertificateType): GeneratedCertifica
     type: typeId,
     algorithm: meta.algorithm,
     bits: meta.bits,
-    issuer: 'RouterGui CA',
-    subject: 'CN=RouterGui RGX-5000, O=RouterGui Virtual CPE',
+    issuer: 'AeroBerry CA',
+    subject: 'CN=AeroBerry RGX-5000, O=AeroBerry Virtual CPE',
     serial,
     fingerprint,
     validFrom,

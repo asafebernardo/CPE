@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import type { DeviceInfoPanelDto } from '@routergui/shared';
+import type { DeviceInfoPanelDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 export function CompactDeviceInfo({ device }: { device: DeviceInfoPanelDto }) {

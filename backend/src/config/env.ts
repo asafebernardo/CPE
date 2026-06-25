@@ -7,7 +7,7 @@ const port = parseInt(process.env.PORT || '3001', 10);
 
 export const env = {
   port,
-  jwtSecret: process.env.JWT_SECRET || 'routergui-dev-secret',
+  jwtSecret: process.env.JWT_SECRET || 'aerobrry-dev-secret',
   nodeEnv: process.env.NODE_ENV || 'development',
   databaseUrl: process.env.DATABASE_URL || 'file:./prisma/dev.db',
 

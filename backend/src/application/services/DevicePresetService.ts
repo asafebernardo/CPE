@@ -1,4 +1,4 @@
-import { getDevicePreset, type DevicePresetId } from '@routergui/shared';
+import { getDevicePreset, type DevicePresetId } from '@aerobrry/shared';
 import type { PrismaDeviceRepository } from '../../infrastructure/database/repositories/PrismaDeviceRepository.js';
 import type { ParameterTreeService } from './ParameterTreeService.js';
 import type { SecurityService } from './SecurityService.js';

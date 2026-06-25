@@ -1,4 +1,4 @@
-import { TR098_IPV6, TR098_X_ROUTERGUI, tr098WanIpv6Leaves, type CwmpParameterValue } from '@routergui/shared';
+import { TR098_IPV6, TR098_X_ROUTERGUI, tr098WanIpv6Leaves, type CwmpParameterValue } from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 
 export interface Ipv6Tr098Source {

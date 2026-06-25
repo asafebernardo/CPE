@@ -3,7 +3,7 @@ import { Box, Button, Grid, TextField, Switch, FormControlLabel, Alert } from '@
 import api from '../services/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { FormSection } from '../components/common/FormSection';
-import type { DmzConfigDto } from '@routergui/shared';
+import type { DmzConfigDto } from '@aerobrry/shared';
 
 export function NatPage() {
   const [dmz, setDmz] = useState<DmzConfigDto>({ enabled: false, hostIp: '' });

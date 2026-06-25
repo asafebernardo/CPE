@@ -6,7 +6,7 @@ import DevicesIcon from '@mui/icons-material/Devices';
 import MemoryIcon from '@mui/icons-material/Memory';
 import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import type { OperationalDashboardResponse } from '@routergui/shared';
+import type { OperationalDashboardResponse } from '@aerobrry/shared';
 import { StatusCard } from '../home/StatusCard';
 import { InfoCard } from '../home/InfoCard';
 import { QuickActions } from '../home/QuickActions';

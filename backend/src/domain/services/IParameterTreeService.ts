@@ -1,5 +1,5 @@
 import type { Tr098ParameterEntity } from '../entities/Tr098Parameter.js';
-import type { CwmpParameterInfo, CwmpParameterValue } from '@routergui/shared';
+import type { CwmpParameterInfo, CwmpParameterValue } from '@aerobrry/shared';
 
 export interface IParameterRepository {
   findByDevice(deviceId: string): Promise<Tr098ParameterEntity[]>;

@@ -3,7 +3,7 @@ import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
 import api from '../services/api';
 import { FormSection } from '../components/common/FormSection';
 import { DataTable } from '../components/common/DataTable';
-import type { OpticalInfoDto } from '@routergui/shared';
+import type { OpticalInfoDto } from '@aerobrry/shared';
 
 export function OntPage() {
   const [optical, setOptical] = useState<OpticalInfoDto | null>(null);

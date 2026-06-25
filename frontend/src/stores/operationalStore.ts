@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { OperationalDashboardResponse } from '@routergui/shared';
+import type { OperationalDashboardResponse } from '@aerobrry/shared';
 import api from '../services/api';
 
 interface OperationalState {

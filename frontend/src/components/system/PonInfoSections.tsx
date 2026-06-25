@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Grid, Card, CardContent, Typography } from '@mui/material';
 import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
-import type { DeviceInfoPanelDto } from '@routergui/shared';
+import type { DeviceInfoPanelDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 function MetricCard({ label, value }: { label: string; value: string }) {

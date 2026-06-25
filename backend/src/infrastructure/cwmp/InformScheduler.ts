@@ -1,6 +1,6 @@
 import type { CwmpClient } from './CwmpClient.js';
 import { prisma } from '../database/prisma.js';
-import { clampPeriodicInformInterval } from '@routergui/shared';
+import { clampPeriodicInformInterval } from '@aerobrry/shared';
 
 export class InformScheduler {
   private timers: Map<string, ReturnType<typeof setInterval>> = new Map();

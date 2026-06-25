@@ -4,7 +4,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
 import { acsColors } from '../../theme/colors';
-import type { FirmwareUploadResult } from '@routergui/shared';
+import type { FirmwareUploadResult } from '@aerobrry/shared';
 
 const ACCEPTED_FIRMWARE = '.bin,.img,.trx,.fw,.zip';
 

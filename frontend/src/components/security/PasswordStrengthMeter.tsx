@@ -1,5 +1,5 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
-import { evaluatePasswordStrength, passwordStrengthLabel, type PasswordStrengthLevel } from '@routergui/shared';
+import { evaluatePasswordStrength, passwordStrengthLabel, type PasswordStrengthLevel } from '@aerobrry/shared';
 
 const LEVEL_COLOR: Record<PasswordStrengthLevel, string> = {
   'very-weak': '#ef4444',

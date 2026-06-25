@@ -1,1 +1,1 @@
-export type { WanConfig, LanConfig, WlanConfig } from '@routergui/shared';
+export type { WanConfig, LanConfig, WlanConfig } from '@aerobrry/shared';

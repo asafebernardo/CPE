@@ -1,4 +1,4 @@
-import type { FirewallRule, PortForward, DmzConfig } from '@routergui/shared';
+import type { FirewallRule, PortForward, DmzConfig } from '@aerobrry/shared';
 
 export interface IFirewallRepository {
   getRules(deviceId: string): Promise<FirewallRule[]>;

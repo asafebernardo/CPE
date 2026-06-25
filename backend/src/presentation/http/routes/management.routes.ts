@@ -9,7 +9,7 @@ import type { InformScheduler } from '../../../infrastructure/cwmp/InformSchedul
 import { getConnectionRequestInfo } from '../../../config/connectionRequest.js';
 
 import { z } from 'zod';
-import { DEVICE_PRESETS, clampPeriodicInformInterval } from '@routergui/shared';
+import { DEVICE_PRESETS, clampPeriodicInformInterval } from '@aerobrry/shared';
 
 const acsConfigSchema = z.object({
   url: z.string(),

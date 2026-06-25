@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Card, CardContent, Typography, Chip, Button, Grid, Alert, Collapse } from '@mui/material';
-import type { OperationalDashboardResponse, WanDashboardDto } from '@routergui/shared';
+import type { OperationalDashboardResponse, WanDashboardDto } from '@aerobrry/shared';
 import { SubTabs } from '../home/SubTabs';
 import { InfoCard } from '../home/InfoCard';
 import { Sparkline } from '../home/Sparkline';

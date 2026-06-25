@@ -9,7 +9,7 @@ import {
   getPasswordHashAlgorithm,
   type DeviceInfoPanelDto,
   type PasswordHashAlgorithm,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 
 export function SystemInfoContent({
   device,

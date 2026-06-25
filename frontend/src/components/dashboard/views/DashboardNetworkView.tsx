@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Box, Grid, Card, CardContent, Typography, Button, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseIcon from '@mui/icons-material/Close';
-import type { OperationalDashboardResponse } from '@routergui/shared';
+import type { OperationalDashboardResponse } from '@aerobrry/shared';
 import { NetworkTopology } from '../NetworkTopology';
 import { CompactTopology } from '../home/CompactTopology';
 import { InfoCard } from '../home/InfoCard';

@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, Chip, Typography, Grid } from '@mui/material';
-import type { WanStatusPanelDto } from '@routergui/shared';
+import type { WanStatusPanelDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 function formatUptime(s: number): string {

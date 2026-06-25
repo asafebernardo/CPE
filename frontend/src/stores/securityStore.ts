@@ -8,7 +8,7 @@ import type {
   HashPreviewDto,
   SecurityProfile,
   AuditReportDto,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import api from '../services/api';
 
 interface SecurityState {

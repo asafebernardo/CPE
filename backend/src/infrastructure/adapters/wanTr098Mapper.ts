@@ -2,7 +2,7 @@ import {
   TR098_WAN_DEVICE,
   tr098WanConnectionDevice,
   type CwmpParameterValue,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 
 const DEFAULT_MAC = '00:1A:2B:3C:4D:5E';
 

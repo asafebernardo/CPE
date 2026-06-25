@@ -3,7 +3,7 @@ import {
   isBandSteeringEligible,
   getBandSteeringWarning,
   NETWORK_WLAN_INTERFACE_TYPES,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import type {
   GuestWirelessInput,
   MeshBackhaulInput,
@@ -11,7 +11,7 @@ import type {
   WirelessInterfaceDto,
   WirelessInterfaceType,
   WirelessInterfaceUpdate,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import type { LogService } from './LogService.js';
 import type { PrismaDeviceRepository } from '../../infrastructure/database/repositories/PrismaDeviceRepository.js';

@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypto';
 import { env } from '../../config/env.js';
-import type { CredentialEncryptionType } from '@routergui/shared';
+import type { CredentialEncryptionType } from '@aerobrry/shared';
 
 function keyFor(bytes: number): Buffer {
   return createHash('sha256').update(env.jwtSecret).digest().subarray(0, bytes);

@@ -1,5 +1,5 @@
 import type { ILogRepository } from '../../domain/repositories/ILogRepository.js';
-import type { LogType } from '@routergui/shared';
+import type { LogType } from '@aerobrry/shared';
 import type { EventEmitter } from 'events';
 
 export class LogService {

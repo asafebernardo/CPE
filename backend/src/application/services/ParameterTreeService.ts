@@ -1,11 +1,11 @@
 import type { IParameterTreeService, IParameterRepository } from '../../domain/services/IParameterTreeService.js';
-import type { CwmpParameterInfo, CwmpParameterValue } from '@routergui/shared';
+import type { CwmpParameterInfo, CwmpParameterValue } from '@aerobrry/shared';
 import {
   TR098_ROOT,
   TR098_MANAGEMENT_SERVER,
   CWMP_SUPPORTED_RPC_METHODS,
   clampPeriodicInformInterval,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { Tr098Adapter } from '../../infrastructure/adapters/Tr098Adapter.js';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import type { EventEmitter } from 'events';

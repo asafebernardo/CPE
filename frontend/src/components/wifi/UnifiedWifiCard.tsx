@@ -16,7 +16,7 @@ import {
   getWifiSecurityMode,
   type BandSteeringConfigDto,
   type WifiSecurityMode,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 
 export interface WlanBandForm {
   band: string;

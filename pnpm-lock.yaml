@@ -10,12 +10,12 @@ importers:
 
   backend:
     dependencies:
+      '@aerobrry/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@prisma/client':
         specifier: ^6.1.0
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
-      '@routergui/shared':
-        specifier: workspace:*
-        version: link:../shared
       axios:
         specifier: ^1.7.9
         version: 1.18.1
@@ -89,6 +89,9 @@ importers:
 
   frontend:
     dependencies:
+      '@aerobrry/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@18.3.31)(react@18.3.1)
@@ -101,9 +104,6 @@ importers:
       '@mui/material':
         specifier: ^6.3.0
         version: 6.5.0(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@routergui/shared':
-        specifier: workspace:*
-        version: link:../shared
       axios:
         specifier: ^1.7.9
         version: 1.18.1

@@ -38,7 +38,7 @@ export function DiagnosticsPage() {
   }
 
   return (
-    <Box>
+    <Box className="rgos-section-diagnostics" sx={{ fontFamily: 'var(--rgos-font-mono)' }}>
       <PageHeader
         title={activeTabConfig?.title ?? 'Diagnostics'}
         subtitle={activeTabConfig?.description ?? 'Network diagnostic tools.'}

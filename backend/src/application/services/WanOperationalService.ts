@@ -8,7 +8,7 @@ import type {
   WanInterfaceInput,
   WanServiceType,
   WanLinkStatus,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import type { IDeviceRepository } from '../../domain/repositories/IDeviceRepository.js';
 import type { LogService } from './LogService.js';
 import { prisma } from '../../infrastructure/database/prisma.js';

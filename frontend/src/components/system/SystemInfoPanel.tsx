@@ -5,7 +5,7 @@ import { FormSection } from '../common/FormSection';
 import { SystemInfoContent } from './SystemInfoContent';
 import { PonOpticalSection, PonOnuSection } from './PonInfoSections';
 import { useAuthStore } from '../../stores/authStore';
-import type { DeviceInfoPanelDto } from '@routergui/shared';
+import type { DeviceInfoPanelDto } from '@aerobrry/shared';
 
 export function SystemInfoPanel() {
   const role = useAuthStore((s) => s.user?.role);

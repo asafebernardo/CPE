@@ -1,13 +1,13 @@
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { hashPassword } from '../../infrastructure/security/passwordHashing.js';
-import { validateAdminPasswordPolicy } from '@routergui/shared';
+import { validateAdminPasswordPolicy } from '@aerobrry/shared';
 import type {
   PasswordHashAlgorithm,
   SecurityProfile,
   SystemUserDto,
   UpdateSystemUserInput,
   UserRole,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import type { LogService } from './LogService.js';
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]{3,32}$/;

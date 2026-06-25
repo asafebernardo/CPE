@@ -8,7 +8,7 @@ import {
   type AuditStatus,
   type SecurityProfile,
   DEFAULT_ADMIN_PASSWORD,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { prisma } from '../../../infrastructure/database/prisma.js';
 import { verifyPassword } from '../../../infrastructure/security/passwordHashing.js';
 import type { SecurityService } from '../SecurityService.js';

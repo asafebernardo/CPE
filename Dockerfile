@@ -1,4 +1,4 @@
-# RouterGui — single container: nginx (frontend + reverse proxy) + Node backend
+# AeroBerry — single container: nginx (frontend + reverse proxy) + Node backend
 #
 # EasyPanel: Build method = Dockerfile, exposed port = 80
 # Env vars: JWT_SECRET, PUBLIC_BASE_URL (and optionally DATABASE_URL, PORT)

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Grid, Card, CardContent, Typography, Chip, Alert } from '@mui/material';
 import WifiIcon from '@mui/icons-material/Wifi';
-import type { OperationalDashboardResponse } from '@routergui/shared';
+import type { OperationalDashboardResponse } from '@aerobrry/shared';
 import { SubTabs } from '../home/SubTabs';
 import { InfoCard } from '../home/InfoCard';
 import { acsColors } from '../../../theme/colors';

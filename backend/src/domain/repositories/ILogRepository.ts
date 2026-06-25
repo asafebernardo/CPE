@@ -1,5 +1,5 @@
 import type { LogEntryEntity } from '../entities/LogEntry.js';
-import type { LogType } from '@routergui/shared';
+import type { LogType } from '@aerobrry/shared';
 
 export interface ILogRepository {
   create(deviceId: string, type: LogType, message: string, details?: string): Promise<LogEntryEntity>;

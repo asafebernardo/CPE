@@ -18,7 +18,7 @@ import {
 import { FormSection } from '../common/FormSection';
 import { PasswordField } from '../common/PasswordField';
 import { useWanStore } from '../../stores/wanStore';
-import type { WanConnectionType, WanDashboardDto } from '@routergui/shared';
+import type { WanConnectionType, WanDashboardDto } from '@aerobrry/shared';
 
 const CONNECTION_TYPES: WanConnectionType[] = ['DHCP', 'PPPoE', 'Static', 'Bridge'];
 const FUTURE_TYPES = ['L2TP', 'PPTP', 'IPoE', 'DS-Lite', 'MAP-T', 'MAP-E'];

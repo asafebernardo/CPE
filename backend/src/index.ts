@@ -3,11 +3,11 @@ import { createApp } from './presentation/http/app.js';
 import { WebSocketHub } from './infrastructure/websocket/WebSocketHub.js';
 import { env } from './config/env.js';
 import { getConnectionRequestInfo } from './config/connectionRequest.js';
-import { DEFAULT_ADMIN_PASSWORD, DEFAULT_ADMIN_USERNAME } from '@routergui/shared';
+import { DEFAULT_ADMIN_PASSWORD, DEFAULT_ADMIN_USERNAME } from '@aerobrry/shared';
 import { syncWebAdminCredentials } from './infrastructure/adapters/webManagementTr098Mapper.js';
 
 async function bootstrap() {
-  const { app, deviceRepo, parameterTree, informScheduler, cwmpClient, simulator, cpeSimulator, wanOperational, authService, eventBus } = createApp();
+  const { app, deviceRepo, parameterTree, informScheduler, cwmpClient, simulator, cpeSimulator, wanOperational, operationalService, authService, eventBus } = createApp();
 
   const device = await deviceRepo.findDefault();
   if (device) {
@@ -57,6 +57,7 @@ async function bootstrap() {
     simulator,
     cpeSimulator,
     wanOperational,
+    operationalService,
     eventBus,
     async () => {
       const d = await deviceRepo.findDefault();
@@ -67,7 +68,7 @@ async function bootstrap() {
 
   server.listen(env.port, () => {
     const cr = getConnectionRequestInfo();
-    console.log(`RouterGui Virtual CPE backend running on http://localhost:${env.port}`);
+    console.log(`AeroBerry Virtual CPE backend running on http://localhost:${env.port}`);
     console.log(`TR-069 Connection Request URL: ${cr.url}`);
     console.log(`WebSocket available at ws://localhost:${env.port}/ws`);
   });

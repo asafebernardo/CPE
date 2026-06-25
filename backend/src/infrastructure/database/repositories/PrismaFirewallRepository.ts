@@ -1,6 +1,6 @@
 import type { IFirewallRepository } from '../../../domain/repositories/IFirewallRepository.js';
-import type { FirewallRule, PortForward, DmzConfig } from '@routergui/shared';
-import { isProtectedFirewallRule } from '@routergui/shared';
+import type { FirewallRule, PortForward, DmzConfig } from '@aerobrry/shared';
+import { isProtectedFirewallRule } from '@aerobrry/shared';
 import { prisma } from '../prisma.js';
 
 export class PrismaFirewallRepository implements IFirewallRepository {

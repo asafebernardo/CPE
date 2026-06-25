@@ -17,7 +17,7 @@ import {
   type WanInterfaceDto,
   type WanInterfaceInput,
   type WanServiceType,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { useWanStore } from '../../stores/wanStore';
 import { acsColors } from '../../theme/colors';
 

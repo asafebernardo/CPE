@@ -7,7 +7,7 @@ import type { PasswordPolicyService } from '../../../application/services/securi
 import type { UserManagementService } from '../../../application/services/UserManagementService.js';
 import type { PrismaDeviceRepository } from '../../../infrastructure/database/repositories/PrismaDeviceRepository.js';
 import { prisma } from '../../../infrastructure/database/prisma.js';
-import { ROLE_LEVEL, type UserRole } from '@routergui/shared';
+import { ROLE_LEVEL, type UserRole } from '@aerobrry/shared';
 import type { Request } from 'express';
 
 const updateUserSchema = z.object({

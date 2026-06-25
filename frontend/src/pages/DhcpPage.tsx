@@ -4,7 +4,7 @@ import api from '../services/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { ProfessionalTable } from '../components/common/ProfessionalTable';
 import { FormSection } from '../components/common/FormSection';
-import type { LanConfigDto } from '@routergui/shared';
+import type { LanConfigDto } from '@aerobrry/shared';
 
 export function DhcpPage() {
   const [lan, setLan] = useState<LanConfigDto>({

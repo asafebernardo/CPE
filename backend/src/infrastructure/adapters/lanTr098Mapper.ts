@@ -1,4 +1,4 @@
-import { TR098_LAN, TR098_WLAN, type CwmpParameterValue } from '@routergui/shared';
+import { TR098_LAN, TR098_WLAN, type CwmpParameterValue } from '@aerobrry/shared';
 
 export interface WirelessIfaceSource {
   index: number;
@@ -104,7 +104,7 @@ export function buildLanTr098Parameters(lan: LanConfigSource): CwmpParameterValu
     { name: TR098_LAN.DHCP_SERVER_CONFIGURABLE, value: 'true' },
     { name: TR098_LAN.DHCP_LEASE_TIME, value: '86400' },
     { name: TR098_LAN.DNS_SERVERS, value: dns },
-    { name: TR098_LAN.DOMAIN_NAME, value: 'routergui.local' },
+    { name: TR098_LAN.DOMAIN_NAME, value: 'aerobrry.local' },
     { name: TR098_LAN.IP_Routers, value: lan.ipAddress },
   ];
 }

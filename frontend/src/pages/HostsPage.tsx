@@ -4,7 +4,7 @@ import api from '../services/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { ProfessionalTable } from '../components/common/ProfessionalTable';
 import { useAuthStore } from '../stores/authStore';
-import type { ConnectedHostExtendedDto } from '@routergui/shared';
+import type { ConnectedHostExtendedDto } from '@aerobrry/shared';
 import { acsColors } from '../theme/colors';
 
 export function HostsPage() {

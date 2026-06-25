@@ -22,7 +22,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useLocation } from 'react-router-dom';
-import { DEVICE_MODEL } from '@routergui/shared';
+import { DEVICE_MODEL } from '@aerobrry/shared';
 import { useAuthStore } from '../stores/authStore';
 import { useOperationalStore } from '../stores/operationalStore';
 import { useEnterpriseNav } from '../hooks/useEnterpriseNav';
@@ -256,7 +256,7 @@ export function Navbar() {
             variant="subtitle2"
             sx={{ fontWeight: 700, letterSpacing: '-0.02em', color: acsColors.textPrimary }}
           >
-            RouterGui
+            AeroBerry
           </Typography>
           {!isMobile && (
             <Typography

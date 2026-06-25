@@ -20,12 +20,13 @@ model User {
 
 model VirtualDevice {
   id              String   @id @default(uuid())
-  manufacturer    String   @default("RouterGui")
+  manufacturer    String   @default("AeroBerry")
   modelName       String   @default("RGX-5000")
   softwareVersion String   @default("1.0.0")
   hardwareVersion String   @default("RGX-HW-A1")
   serialNumber    String   @unique
-  osName          String   @default("RGOS")
+  osName          String   @default("AeroBerry OS")
+  capabilitiesJson String  @default("{}")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -317,7 +318,7 @@ model SpeedTestResult {
   uploadMbps   Float
   latencyMs    Float
   jitterMs     Float    @default(2)
-  server       String   @default("RouterGui Speed Server")
+  server       String   @default("AeroBerry Speed Server")
   testedAt     DateTime @default(now())
 
   device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
@@ -516,8 +517,8 @@ model SecuritySettings {
   certType                 String   @default("rsa-2048")
   certAlgorithm            String   @default("RSA")
   certBits                 Int      @default(2048)
-  certIssuer               String   @default("RouterGui CA")
-  certSubject              String   @default("CN=RouterGui RGX-5000")
+  certIssuer               String   @default("AeroBerry CA")
+  certSubject              String   @default("CN=AeroBerry RGX-5000")
   certSerial               String   @default("")
   certFingerprint          String   @default("")
   certValidFrom            DateTime @default(now())

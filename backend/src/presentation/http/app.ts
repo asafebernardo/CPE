@@ -39,6 +39,7 @@ import { PasswordPolicyService } from '../../application/services/security/Passw
 import { CredentialGeneratorService } from '../../application/services/security/CredentialGeneratorService.js';
 import { WifiSecurityValidator } from '../../application/services/security/WifiSecurityValidator.js';
 import { DevicePresetService } from '../../application/services/DevicePresetService.js';
+import { CapabilitiesService } from '../../application/services/CapabilitiesService.js';
 import { UserManagementService } from '../../application/services/UserManagementService.js';
 import { createSecurityRoutes } from './routes/security.routes.js';
 
@@ -66,6 +67,7 @@ export function createApp() {
   const backupService = new ConfigBackupService();
   const userManagementService = new UserManagementService(logService);
   const devicePresetService = new DevicePresetService(deviceRepo, securityService, parameterTree, logService);
+  const capabilitiesService = new CapabilitiesService();
 
   const onReboot = async (deviceId: string) => {
     await deviceRepo.resetMetrics(deviceId);
@@ -116,7 +118,7 @@ export function createApp() {
   app.use('/api/acs', auth, createAcsRoutes(deviceRepo, cwmpClient, informScheduler, logService, parameterTree));
   app.use('/api/hosts', auth, createHostsRoutes(cpeSimulator, deviceRepo));
   app.use('/api/wifi', auth, createWifiAdvancedRoutes(cpeSimulator, deviceRepo));
-  app.use('/api/cpe', auth, createCpeRoutes(cpeSimulator, deviceRepo));
+  app.use('/api/cpe', auth, createCpeRoutes(cpeSimulator, deviceRepo, capabilitiesService));
   app.use('/api/operational', auth, createOperationalRoutes(operationalService, deviceRepo));
   app.use('/api/security', auth, createSecurityRoutes(deviceRepo, securityService, securityProfileService, securityAuditService, passwordPolicyService, userManagementService));
 
@@ -133,6 +135,8 @@ export function createApp() {
     simulator,
     cpeSimulator,
     wanOperational: wanOperationalService,
+    operationalService,
+    capabilitiesService,
     authService,
     eventBus,
   };

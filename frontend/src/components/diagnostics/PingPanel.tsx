@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, Grid, TextField } from '@mui/material';
 import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
-import type { PingResponse } from '@routergui/shared';
+import type { PingResponse } from '@aerobrry/shared';
 
 export function PingPanel() {
   const [pingTarget, setPingTarget] = useState('8.8.8.8');

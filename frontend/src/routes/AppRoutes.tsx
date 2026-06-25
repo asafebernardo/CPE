@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { MainLayout } from '../layouts/MainLayout';
+import { OsShell } from '../os/shell/OsShell';
 import { RouteGuard } from '../components/common/RouteGuard';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
@@ -22,12 +22,12 @@ function ProtectedLayout() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return (
-    <MainLayout>
+    <OsShell>
       <ForcePasswordChangeDialog />
       <RouteGuard>
         <Outlet />
       </RouteGuard>
-    </MainLayout>
+    </OsShell>
   );
 }
 

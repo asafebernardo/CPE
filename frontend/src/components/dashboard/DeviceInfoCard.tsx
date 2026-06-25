@@ -1,5 +1,5 @@
 import { Box, Typography, Divider } from '@mui/material';
-import type { DeviceInfoPanelDto } from '@routergui/shared';
+import type { DeviceInfoPanelDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 function formatUptime(seconds: number): string {

@@ -1,5 +1,5 @@
 import { Chip } from '@mui/material';
-import { COMPLIANCE_BADGE_COLORS, type ComplianceBadge as ComplianceBadgeType } from '@routergui/shared';
+import { COMPLIANCE_BADGE_COLORS, type ComplianceBadge as ComplianceBadgeType } from '@aerobrry/shared';
 
 export function ComplianceBadge({ badge, size = 'small' }: { badge: ComplianceBadgeType; size?: 'small' | 'medium' }) {
   const color = COMPLIANCE_BADGE_COLORS[badge];

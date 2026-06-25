@@ -4,7 +4,7 @@ import {
   DEFAULT_ADMIN_USERNAME,
   type CwmpParameterValue,
   type PasswordHashAlgorithm,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { hashPassword } from '../../infrastructure/security/passwordHashing.js';
 

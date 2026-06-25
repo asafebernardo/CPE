@@ -1,4 +1,4 @@
-import type { ParameterType } from '@routergui/shared';
+import type { ParameterType } from '@aerobrry/shared';
 
 export interface Tr098ParameterEntity {
   id: string;

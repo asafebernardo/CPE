@@ -3,7 +3,7 @@ import { Alert, Box, Button, Grid, TextField } from '@mui/material';
 import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
 import { DataTable } from '../common/DataTable';
-import type { TracerouteResponse } from '@routergui/shared';
+import type { TracerouteResponse } from '@aerobrry/shared';
 
 export function TraceroutePanel() {
   const [traceTarget, setTraceTarget] = useState('google.com');

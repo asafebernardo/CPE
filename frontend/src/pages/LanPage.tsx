@@ -3,7 +3,7 @@ import { Box, TextField, Button, Grid, Alert } from '@mui/material';
 import api from '../services/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { FormSection } from '../components/common/FormSection';
-import type { LanConfigDto } from '@routergui/shared';
+import type { LanConfigDto } from '@aerobrry/shared';
 
 export function LanPage() {
   const [config, setConfig] = useState<LanConfigDto>({

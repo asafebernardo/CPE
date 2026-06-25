@@ -9,7 +9,7 @@ import {
   getWifiSecurityMode,
   type WirelessBand,
   type WirelessInterfaceDto,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 const TYPE_COLORS: Record<WirelessInterfaceDto['interfaceType'], string> = {

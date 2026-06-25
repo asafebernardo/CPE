@@ -11,7 +11,7 @@ import {
   WIRELESS_INTERFACE_TYPE_LABELS,
   type WirelessInterfaceDto,
   type WirelessInterfaceType,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 const TYPE_COLORS: Record<WirelessInterfaceType, string> = {

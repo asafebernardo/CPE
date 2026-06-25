@@ -1,4 +1,4 @@
-import type { UserRole } from '@routergui/shared';
+import type { UserRole } from '@aerobrry/shared';
 
 export interface NavItem {
   path: string;

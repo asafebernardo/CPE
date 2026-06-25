@@ -1,5 +1,5 @@
 import { XMLBuilder, XMLParser } from 'fast-xml-parser';
-import { CWMP_NAMESPACE } from '@routergui/shared';
+import { CWMP_NAMESPACE } from '@aerobrry/shared';
 
 const builder = new XMLBuilder({
   ignoreAttributes: false,
@@ -124,7 +124,7 @@ export class SoapBuilder {
         'soap:Body': {
           'cwmp:Inform': {
             DeviceId: {
-              Manufacturer: deviceId?.manufacturer ?? 'RouterGui',
+              Manufacturer: deviceId?.manufacturer ?? 'AeroBerry',
               OUI: deviceId?.oui ?? '001A2B',
               ProductClass: deviceId?.productClass ?? 'RGX-5000',
               SerialNumber: serialNumber,

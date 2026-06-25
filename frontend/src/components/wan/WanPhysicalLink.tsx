@@ -1,5 +1,5 @@
 import { Card, CardContent, Typography, Grid } from '@mui/material';
-import type { WanPhysicalLinkDto } from '@routergui/shared';
+import type { WanPhysicalLinkDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 export function WanPhysicalLink({ link }: { link: WanPhysicalLinkDto }) {

@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import api from '../../services/api';
 import { FormSection } from '../common/FormSection';
-import { DEVICE_PRESETS, type DevicePresetDto } from '@routergui/shared';
+import { DEVICE_PRESETS, type DevicePresetDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 export function ActionsPanel() {

@@ -1,4 +1,4 @@
-import type { SecurityProfile } from '@routergui/shared';
+import type { SecurityProfile } from '@aerobrry/shared';
 import { prisma } from '../../../infrastructure/database/prisma.js';
 import type { SecurityService } from '../SecurityService.js';
 import type { LogService } from '../LogService.js';

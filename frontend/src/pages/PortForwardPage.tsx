@@ -21,7 +21,7 @@ import { PageHeader } from '../components/common/PageHeader';
 import { FormSection } from '../components/common/FormSection';
 import { ProfessionalTable } from '../components/common/ProfessionalTable';
 import { ProtocolSelect } from '../components/common/ProtocolSelect';
-import type { PortForwardDto } from '@routergui/shared';
+import type { PortForwardDto } from '@aerobrry/shared';
 
 type PortForwardForm = Omit<PortForwardDto, 'id'>;
 

@@ -6,7 +6,7 @@ function formatBytes(n: number): string {
 }
 
 import { Card, CardContent, Typography, Grid, Box } from '@mui/material';
-import type { WanStatisticsDto } from '@routergui/shared';
+import type { WanStatisticsDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 function StatBar({ label, value, max, format }: { label: string; value: number; max: number; format?: boolean }) {

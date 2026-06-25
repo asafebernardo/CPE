@@ -1,5 +1,5 @@
 import { Box, Typography, Tooltip } from '@mui/material';
-import type { LedIndicatorDto } from '@routergui/shared';
+import type { LedIndicatorDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 const ledColors = {

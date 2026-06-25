@@ -5,7 +5,7 @@ import {
   validateWifiPasswordPolicy,
   getSecurityProfile,
   type WifiSecurityMode,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 
 export interface WifiValidationResult {
   valid: boolean;

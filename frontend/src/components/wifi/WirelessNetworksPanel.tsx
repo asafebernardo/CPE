@@ -11,14 +11,14 @@ import {
   type BandSteeringConfigDto,
   normalizeWifiSecurityMode,
   WIFI_SECURITY_MODES,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { WirelessSectionHeader } from './WirelessInterfaceCard';
 import { WirelessInterfacesTable } from './WirelessInterfacesTable';
 import { UnifiedWifiCard, type WlanBandForm } from './UnifiedWifiCard';
 import { PasswordField } from '../common/PasswordField';
 import { SecuritySelect } from '../security/SecuritySelect';
 import { useSecurityStore } from '../../stores/securityStore';
-import { getSecurityProfile } from '@routergui/shared';
+import { getSecurityProfile } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 const EMPTY_GUEST: GuestWirelessInput = {

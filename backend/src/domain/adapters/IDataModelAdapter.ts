@@ -1,4 +1,4 @@
-import type { CwmpParameterValue } from '@routergui/shared';
+import type { CwmpParameterValue } from '@aerobrry/shared';
 
 export interface IDataModelAdapter {
   readonly modelName: 'TR-098' | 'TR-181';

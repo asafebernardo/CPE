@@ -1,8 +1,8 @@
 {
-  "name": "routergui-virtual-cpe",
+  "name": "aerobrry-virtual-cpe",
   "version": "1.0.0",
   "private": true,
-  "description": "RouterGui Virtual CPE - TR-069 compatible router simulator",
+  "description": "AeroBerry Virtual CPE - TR-069 compatible router simulator",
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",

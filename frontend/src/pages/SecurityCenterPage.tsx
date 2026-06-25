@@ -31,7 +31,7 @@ import {
   type BackupEncryptionType,
   type CertificateType,
   type SecurityProfile,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { acsColors } from '../theme/colors';
 
 function ScoreCard({ title, score }: { title: string; score: number }) {
@@ -157,8 +157,7 @@ export function SecurityCenterPage() {
   const adminPolicy = pw.next ? validateAdminPasswordPolicy(settings.securityProfile, pw.next) : null;
 
   return (
-    <Box>
-      <PageHeader title="Security Center" subtitle="Compliance profile, Wi-Fi, passwords, certificate and configuration audit." />
+    <Box className="rgos-section-security">
 
       {settings.securityProfile === 'legacy' && (
         <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ mb: 2 }}>

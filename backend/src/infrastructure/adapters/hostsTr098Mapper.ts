@@ -1,4 +1,4 @@
-import { TR098_LAN_HOSTS, type CwmpParameterValue } from '@routergui/shared';
+import { TR098_LAN_HOSTS, type CwmpParameterValue } from '@aerobrry/shared';
 
 export interface HostSource {
   index: number;

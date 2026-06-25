@@ -1,4 +1,4 @@
-import { TR098_LAN_ETHERNET, type CwmpParameterValue } from '@routergui/shared';
+import { TR098_LAN_ETHERNET, type CwmpParameterValue } from '@aerobrry/shared';
 
 const LAN_PORT_MACS = [
   '00:1A:2B:3C:4D:61',

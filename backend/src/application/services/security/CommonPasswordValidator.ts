@@ -1,4 +1,4 @@
-import { isCommonPassword, COMMON_PASSWORDS, COMMON_PASSWORD_MESSAGE } from '@routergui/shared';
+import { isCommonPassword, COMMON_PASSWORDS, COMMON_PASSWORD_MESSAGE } from '@aerobrry/shared';
 
 /**
  * Validates passwords against a blocklist of commonly used passwords.

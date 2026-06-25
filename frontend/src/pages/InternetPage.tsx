@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Grid, Button, Card, CardContent, Typography, Chip, Alert, CircularProgress } from '@mui/material';
 import api from '../services/api';
 import { PageHeader } from '../components/common/PageHeader';
-import type { WanDashboardDto } from '@routergui/shared';
+import type { WanDashboardDto } from '@aerobrry/shared';
 import { acsColors } from '../theme/colors';
 
 function formatUptime(s: number): string {

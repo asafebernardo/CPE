@@ -16,6 +16,32 @@ export interface DeviceInfoPanelDto {
   uptime: number;
 }
 
+export type TopologyNodeType = 'internet' | 'wan' | 'router' | 'lan' | 'wifi' | 'device' | 'mesh';
+export type TopologyNodeStatus = 'online' | 'offline' | 'active' | 'idle';
+
+export interface TopologyNodeDto {
+  id: string;
+  type: TopologyNodeType;
+  label: string;
+  status: TopologyNodeStatus;
+  metrics?: { throughput?: number; rssi?: number; clients?: number };
+}
+
+export interface TopologyEdgeDto {
+  id: string;
+  from: string;
+  to: string;
+  traffic: number;
+}
+
+export interface TopologyGraphDto {
+  nodes: TopologyNodeDto[];
+  edges: TopologyEdgeDto[];
+  lanClientCount: number;
+  wifi24ClientCount: number;
+  wifi5ClientCount: number;
+}
+
 export interface TopologyDto {
   internetOnline: boolean;
   wanStatus: 'connected' | 'disconnected';
@@ -25,6 +51,7 @@ export interface TopologyDto {
   lanClientCount: number;
   wifi24ClientCount: number;
   wifi5ClientCount: number;
+  graph?: TopologyGraphDto;
 }
 
 export interface OperationalDashboardResponse {

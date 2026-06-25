@@ -1,37 +1,37 @@
 /* ============================================================
-   RouterGui — Design Tokens (default OLED enterprise theme)
+   AeroBerry — Design Tokens (operational charcoal theme)
    ============================================================ */
 
 :root,
 html[data-theme='default'] {
   color-scheme: dark;
 
-  --acs-bg-primary: #000000;
-  --acs-bg-secondary: #050505;
-  --acs-bg-card: #111111;
-  --acs-bg-input: #0a0a0a;
-  --acs-bg-sidebar: #0a0a0a;
+  --acs-bg-primary: #07090c;
+  --acs-bg-secondary: #0c0f14;
+  --acs-bg-card: #101419;
+  --acs-bg-input: #0a0d11;
+  --acs-bg-sidebar: #0a0d11;
 
-  --acs-accent: #38bdf8;
-  --acs-accent-hover: #60a5fa;
+  --acs-accent: #5eb8d4;
+  --acs-accent-hover: #7ecce3;
 
-  --acs-text-primary: #f9fafb;
-  --acs-text-secondary: #94a3b8;
-  --acs-text-muted: #64748b;
+  --acs-text-primary: #e8eaed;
+  --acs-text-secondary: #9aa3ad;
+  --acs-text-muted: #5c6570;
 
-  --acs-border: rgba(255, 255, 255, 0.04);
+  --acs-border: rgba(255, 255, 255, 0.07);
   --acs-border-subtle: rgba(255, 255, 255, 0.04);
 
-  --acs-success: #22c55e;
-  --acs-warning: #f59e0b;
-  --acs-error: #ef4444;
+  --acs-success: #3dd68c;
+  --acs-warning: #e5a045;
+  --acs-error: #e05252;
 
-  --acs-accent-soft: rgba(56, 189, 248, 0.1);
-  --acs-accent-soft-strong: rgba(56, 189, 248, 0.16);
-  --acs-success-soft: rgba(34, 197, 94, 0.13);
+  --acs-accent-soft: rgba(94, 184, 212, 0.08);
+  --acs-accent-soft-strong: rgba(94, 184, 212, 0.12);
+  --acs-success-soft: rgba(61, 214, 140, 0.1);
   --acs-muted-soft: rgba(255, 255, 255, 0.03);
 
-  --acs-scroll-track: #000000;
-  --acs-scroll-thumb: rgba(255, 255, 255, 0.12);
-  --acs-app-bg: #000000;
+  --acs-scroll-track: #07090c;
+  --acs-scroll-thumb: rgba(255, 255, 255, 0.1);
+  --acs-app-bg: #07090c;
 }

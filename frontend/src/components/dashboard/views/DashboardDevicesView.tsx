@@ -1,6 +1,6 @@
 import { Box, Grid, Chip, Typography } from '@mui/material';
 import DevicesIcon from '@mui/icons-material/Devices';
-import type { ConnectedHostExtendedDto, OperationalDashboardResponse } from '@routergui/shared';
+import type { ConnectedHostExtendedDto, OperationalDashboardResponse } from '@aerobrry/shared';
 import { StatusCard } from '../home/StatusCard';
 import { ProfessionalTable } from '../../common/ProfessionalTable';
 import { getDeviceType } from '../home/deviceType';

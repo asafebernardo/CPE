@@ -33,7 +33,7 @@ import {
   type SystemUserDto,
   type UpdateSystemUserInput,
   type UserRole,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 const ROLE_COLORS: Record<UserRole, string> = {

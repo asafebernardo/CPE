@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { WanDashboardDto, WanInterfaceDto, WanInterfaceInput } from '@routergui/shared';
+import type { WanDashboardDto, WanInterfaceDto, WanInterfaceInput } from '@aerobrry/shared';
 import api from '../services/api';
 
 interface WanState {

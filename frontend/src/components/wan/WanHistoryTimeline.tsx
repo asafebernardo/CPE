@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import type { WanHistoryEventDto } from '@routergui/shared';
+import type { WanHistoryEventDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 export function WanHistoryTimeline({ events }: { events: WanHistoryEventDto[] }) {

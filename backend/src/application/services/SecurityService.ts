@@ -17,7 +17,7 @@ import {
   type SecurityProfile,
   type HashPreviewDto,
   DEFAULT_ADMIN_PASSWORD,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { generateCertificate } from '../../infrastructure/security/certificate.js';
 import { hashPassword, verifyPassword } from '../../infrastructure/security/passwordHashing.js';

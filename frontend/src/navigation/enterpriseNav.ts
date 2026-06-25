@@ -1,4 +1,4 @@
-import type { UserRole } from '@routergui/shared';
+import type { UserRole } from '@aerobrry/shared';
 import type { NavItem } from './menuConfig';
 
 export type MainSectionId =

@@ -1,5 +1,5 @@
 import { Card, CardContent, Typography, Grid } from '@mui/material';
-import type { WanQualityDto } from '@routergui/shared';
+import type { WanQualityDto } from '@aerobrry/shared';
 import { acsColors } from '../../theme/colors';
 
 export function WanQualityPanel({ quality }: { quality: WanQualityDto }) {

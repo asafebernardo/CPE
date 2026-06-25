@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { env } from '../../config/env.js';
 import { verifyPassword, hashPassword } from '../../infrastructure/security/passwordHashing.js';
-import type { LoginResponse, PasswordHashAlgorithm } from '@routergui/shared';
+import type { LoginResponse, PasswordHashAlgorithm } from '@aerobrry/shared';
 
 export class AuthService {
   async login(username: string, password: string): Promise<LoginResponse | null> {

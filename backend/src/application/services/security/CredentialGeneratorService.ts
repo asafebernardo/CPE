@@ -20,13 +20,13 @@ function shuffle(chars: string[]): string {
 
 /**
  * Generates unique, strong default Wi-Fi credentials for a device.
- * SSID format: RouterGui-RGX5000-XXXX (random hex suffix).
+ * SSID format: AeroBerry-RGX5000-XXXX (random hex suffix).
  * Password: 12–16 chars with upper, lower, digit and special, never fixed.
  */
 export class CredentialGeneratorService {
   generateSsid(modelTag = 'RGX5000'): string {
     const suffix = Array.from({ length: 4 }, () => pick(HEX)).join('');
-    return `RouterGui-${modelTag}-${suffix}`;
+    return `AeroBerry-${modelTag}-${suffix}`;
   }
 
   generateWifiPassword(): string {

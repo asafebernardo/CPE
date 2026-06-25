@@ -1,4 +1,4 @@
-import type { UserRole } from '@routergui/shared';
+import type { UserRole } from '@aerobrry/shared';
 
 export type SystemTabId = 'info' | 'users' | 'backup' | 'firmware' | 'actions' | 'logs';
 
@@ -26,7 +26,7 @@ export const SYSTEM_TABS: SystemTab[] = [
     label: 'Users',
     path: '/system/users',
     title: 'Users',
-    description: 'System accounts for RouterGui access.',
+    description: 'System accounts for AeroBerry access.',
     minRole: 'TECHNICIAN',
   },
   {

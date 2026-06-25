@@ -23,8 +23,8 @@ import { FormSection } from '../components/common/FormSection';
 import { PageHeader } from '../components/common/PageHeader';
 import { ProfessionalTable } from '../components/common/ProfessionalTable';
 import { ProtocolSelect } from '../components/common/ProtocolSelect';
-import type { FirewallRuleDto, ProtocolOption } from '@routergui/shared';
-import { isProtectedFirewallRule } from '@routergui/shared';
+import type { FirewallRuleDto, ProtocolOption } from '@aerobrry/shared';
+import { isProtectedFirewallRule } from '@aerobrry/shared';
 
 type FirewallRuleForm = Omit<FirewallRuleDto, 'id'>;
 

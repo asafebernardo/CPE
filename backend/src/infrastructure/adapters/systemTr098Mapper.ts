@@ -5,7 +5,7 @@ import {
   TR098_LAN,
   clampPeriodicInformInterval,
   type CwmpParameterValue,
-} from '@routergui/shared';
+} from '@aerobrry/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 
 export interface SystemTr098Source {
