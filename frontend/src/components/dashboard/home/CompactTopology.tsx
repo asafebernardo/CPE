@@ -29,7 +29,7 @@ function Node({
           width: 30,
           height: 30,
           borderRadius: 1.5,
-          bgcolor: highlight ? `${acsColors.accent}1A` : acsColors.bgInput,
+          bgcolor: highlight ? acsColors.accentSoft : acsColors.bgInput,
           border: highlight ? `1px solid ${acsColors.accent}` : `1px solid ${acsColors.border}`,
           color: highlight ? acsColors.accent : acsColors.textSecondary,
         }}

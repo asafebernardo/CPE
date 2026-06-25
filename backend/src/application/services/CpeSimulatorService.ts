@@ -14,6 +14,11 @@ const SAMPLE_HOSTS = [
 
 const NEIGHBOR_SSIDS = ['NET_2G', 'VIVO_WIFI', 'CLARO_5G', 'Guest_WiFi', 'FiberHome', 'TP-Link_5G', 'ZTE_AP', 'Intelbras'];
 
+function parseFirmwareVersion(filename: string): string {
+  const match = filename.match(/(\d+\.\d+(?:\.\d+)?(?:[-_][\w.]+)?)/);
+  return match?.[1] ?? filename.replace(/\.[^.]+$/, '');
+}
+
 export class CpeSimulatorService {
   constructor(
     private readonly logService?: LogService,
@@ -31,6 +36,7 @@ export class CpeSimulatorService {
     await prisma.vpnConfig.create({ data: { deviceId } });
     await prisma.firmwareInfo.create({ data: { deviceId } });
     await prisma.ntpConfig.create({ data: { deviceId } });
+    await prisma.webManagementConfig.create({ data: { deviceId } });
     await prisma.opticalInfo.create({ data: { deviceId } });
 
     await prisma.voipLine.createMany({
@@ -98,7 +104,7 @@ export class CpeSimulatorService {
       const rssi = -40 + Math.floor(Math.random() * 35);
       let band = host.band;
 
-      if (steering?.enabled && steering.clientSteering && rssi < steering.rssiThreshold && band === '2.4' && steering.prefer5G) {
+      if (steering?.enabled && steering.clientSteering && rssi < steering.rssiThreshold24 && band === '2.4' && steering.prefer5G) {
         band = '5';
         await this.logService?.log(deviceId, 'SYSTEM', `Band steering: ${host.hostname} steered to 5 GHz`);
       }
@@ -156,10 +162,11 @@ export class CpeSimulatorService {
 
   async getBandSteering(deviceId: string) {
     const cfg = await prisma.bandSteeringConfig.findUnique({ where: { deviceId } });
-    if (!cfg) return { enabled: true, rssiThreshold: -70, prefer5G: true, clientSteering: true };
+    if (!cfg) return { enabled: true, rssiThreshold24: -70, rssiThreshold5: -65, prefer5G: true, clientSteering: true };
     return {
       enabled: cfg.enabled,
-      rssiThreshold: cfg.rssiThreshold,
+      rssiThreshold24: cfg.rssiThreshold24,
+      rssiThreshold5: cfg.rssiThreshold5,
       prefer5G: cfg.prefer5G,
       clientSteering: cfg.clientSteering,
     };
@@ -167,16 +174,25 @@ export class CpeSimulatorService {
 
   async updateBandSteering(deviceId: string, data: {
     enabled?: boolean;
-    rssiThreshold?: number;
+    rssiThreshold24?: number;
+    rssiThreshold5?: number;
     prefer5G?: boolean;
     clientSteering?: boolean;
   }) {
     const cfg = await prisma.bandSteeringConfig.update({ where: { deviceId }, data });
+    if (cfg.enabled) {
+      await prisma.wlanConfig.updateMany({ where: { deviceId }, data: { enabled: true } });
+      await prisma.wirelessInterface.updateMany({
+        where: { deviceId, interfaceType: 'primary' },
+        data: { enabled: true },
+      });
+    }
     this.eventBus?.emit('bandsteering.changed', cfg);
     await this.logService?.log(deviceId, 'PARAM_CHANGE', 'Band steering configuration updated');
     return {
       enabled: cfg.enabled,
-      rssiThreshold: cfg.rssiThreshold,
+      rssiThreshold24: cfg.rssiThreshold24,
+      rssiThreshold5: cfg.rssiThreshold5,
       prefer5G: cfg.prefer5G,
       clientSteering: cfg.clientSteering,
     };
@@ -332,9 +348,26 @@ export class CpeSimulatorService {
   }
 
   async upgradeFirmware(deviceId: string) {
+    return this.startFirmwareUpgrade(deviceId, '1.0.1', 'online repository');
+  }
+
+  async upgradeFirmwareFromFile(
+    deviceId: string,
+    file: { originalname: string; size: number },
+  ) {
+    const targetVersion = parseFirmwareVersion(file.originalname);
+    await this.logService?.log(
+      deviceId,
+      'SYSTEM',
+      `Firmware image uploaded: ${file.originalname} (${file.size} bytes)`,
+    );
+    return this.startFirmwareUpgrade(deviceId, targetVersion, file.originalname);
+  }
+
+  private async startFirmwareUpgrade(deviceId: string, targetVersion: string, source: string) {
     await prisma.firmwareInfo.update({
       where: { deviceId },
-      data: { upgradeStatus: 'downloading', pendingVersion: '1.0.1' },
+      data: { upgradeStatus: 'downloading', pendingVersion: targetVersion },
     });
     this.eventBus?.emit('firmware.upgrade.progress', { status: 'downloading', progress: 0 });
 
@@ -342,17 +375,17 @@ export class CpeSimulatorService {
       await prisma.firmwareInfo.update({
         where: { deviceId },
         data: {
-          currentVersion: '1.0.1',
+          currentVersion: targetVersion,
           pendingVersion: null,
           upgradeStatus: 'idle',
           lastUpgrade: new Date(),
         },
       });
       this.eventBus?.emit('firmware.upgrade.progress', { status: 'completed', progress: 100 });
-      await this.logService?.log(deviceId, 'SYSTEM', 'Firmware upgraded to 1.0.1');
+      await this.logService?.log(deviceId, 'SYSTEM', `Firmware upgraded to ${targetVersion} (${source})`);
     }, 3000);
 
-    return { status: 'downloading', message: 'Firmware upgrade started' };
+    return { status: 'downloading', message: 'Firmware upgrade started', targetVersion };
   }
 
   async tickOptical(deviceId: string) {

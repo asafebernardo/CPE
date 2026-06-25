@@ -1,5 +1,5 @@
 export type FirewallDirection = 'inbound' | 'outbound';
-export type FirewallProtocol = 'TCP' | 'UDP' | 'ICMP' | 'ANY';
+export type FirewallProtocol = 'TCP' | 'UDP' | 'BOTH' | 'ICMP' | 'ANY';
 export type FirewallAction = 'allow' | 'deny';
 
 export interface FirewallRule {

@@ -1,6 +1,28 @@
 import { Router } from 'express';
+import multer from 'multer';
+import path from 'node:path';
 import type { CpeSimulatorService } from '../../../application/services/CpeSimulatorService.js';
 import type { PrismaDeviceRepository } from '../../../infrastructure/database/repositories/PrismaDeviceRepository.js';
+import { prisma } from '../../../infrastructure/database/prisma.js';
+import {
+  validateBandSteeringMembership,
+  type WirelessInterfaceType,
+} from '@routergui/shared';
+
+const FIRMWARE_UPLOAD_EXTENSIONS = new Set(['.bin', '.img', '.trx', '.fw', '.zip']);
+
+const firmwareUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 64 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (FIRMWARE_UPLOAD_EXTENSIONS.has(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid firmware file type. Allowed: .bin, .img, .trx, .fw, .zip'));
+    }
+  },
+});
 
 export function createHostsRoutes(cpe: CpeSimulatorService, deviceRepo: PrismaDeviceRepository) {
   const router = Router();
@@ -55,7 +77,31 @@ export function createWifiAdvancedRoutes(cpe: CpeSimulatorService, deviceRepo: P
     try {
       const device = await deviceRepo.findDefault();
       if (!device) return res.status(404).json({ error: 'Not Found' });
-      res.json(await cpe.updateBandSteering(device.id, req.body));
+
+      const interfaceIds = req.body?.interfaceIds as string[] | undefined;
+      if (interfaceIds?.length) {
+        for (const interfaceId of interfaceIds) {
+          const iface = await prisma.wirelessInterface.findUnique({
+            where: { deviceId_interfaceId: { deviceId: device.id, interfaceId } },
+          });
+          if (!iface) {
+            return res.status(400).json({ error: 'Bad Request', message: `Interface ${interfaceId} not found` });
+          }
+          const check = validateBandSteeringMembership(iface.interfaceType as WirelessInterfaceType);
+          if (!check.valid) {
+            return res.status(400).json({ error: 'Bad Request', message: check.error });
+          }
+          if (!iface.enabled) {
+            return res.status(400).json({
+              error: 'Bad Request',
+              message: 'Main interface must be enabled to participate in Band Steering',
+            });
+          }
+        }
+      }
+
+      const { interfaceIds: _omit, ...steeringData } = req.body ?? {};
+      res.json(await cpe.updateBandSteering(device.id, steeringData));
     } catch (e) {
       next(e);
     }
@@ -295,6 +341,32 @@ export function createCpeRoutes(cpe: CpeSimulatorService, deviceRepo: PrismaDevi
       const device = await deviceRepo.findDefault();
       if (!device) return res.status(404).json({ error: 'Not Found' });
       res.json(await cpe.upgradeFirmware(device.id));
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.post('/firmware/upload', (req, res, next) => {
+    firmwareUpload.single('firmware')(req, res, (err) => {
+      if (err) return res.status(400).json({ error: err.message });
+      next();
+    });
+  }, async (req, res, next) => {
+    try {
+      const device = await deviceRepo.findDefault();
+      if (!device) return res.status(404).json({ error: 'Not Found' });
+      if (!req.file) return res.status(400).json({ error: 'No firmware file provided' });
+
+      const result = await cpe.upgradeFirmwareFromFile(device.id, {
+        originalname: req.file.originalname,
+        size: req.file.size,
+      });
+
+      res.json({
+        ...result,
+        fileName: req.file.originalname,
+        fileSize: req.file.size,
+      });
     } catch (e) {
       next(e);
     }

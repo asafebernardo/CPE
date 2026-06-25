@@ -3,6 +3,7 @@ import { Box, Typography, Button, TextField, Grid, Switch, FormControlLabel, Tab
 import api from '../services/api';
 import { FormSection } from '../components/common/FormSection';
 import { DataTable } from '../components/common/DataTable';
+import { PasswordField } from '../components/common/PasswordField';
 
 export function NetworkAdvancedPage() {
   const [tab, setTab] = useState(0);
@@ -44,7 +45,7 @@ export function NetworkAdvancedPage() {
           <Grid container spacing={2}>
             <Grid item xs={12}><FormControlLabel control={<Switch checked={guest.enabled} onChange={(e) => setGuest({ ...guest, enabled: e.target.checked })} />} label="Enable Guest Wi-Fi" /></Grid>
             <Grid item xs={6}><TextField fullWidth label="SSID" value={guest.ssid} onChange={(e) => setGuest({ ...guest, ssid: e.target.value })} /></Grid>
-            <Grid item xs={6}><TextField fullWidth label="Password" type="password" value={guest.password} onChange={(e) => setGuest({ ...guest, password: e.target.value })} /></Grid>
+            <Grid item xs={6}><PasswordField fullWidth label="Password" value={guest.password} onChange={(e) => setGuest({ ...guest, password: e.target.value })} /></Grid>
           </Grid>
           <Button sx={{ mt: 2 }} variant="contained" onClick={() => api.put('/cpe/guest-wifi', guest)}>Save Guest Wi-Fi</Button>
         </FormSection>

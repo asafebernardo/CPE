@@ -12,7 +12,14 @@ export class GetParameterValuesHandler {
   async handle(deviceId: string, paths: string[]) {
     await this.logService.log(deviceId, 'ACS_COMMAND', `GetParameterValues: ${paths.join(', ')}`);
     this.eventBus?.emit('cwmp.command', { method: 'GetParameterValues', parameters: paths });
-    return await this.parameterTree.getParameterValues(deviceId, paths);
+    const values = await this.parameterTree.getParameterValues(deviceId, paths);
+    await this.logService.log(
+      deviceId,
+      'ACS_COMMAND',
+      `GetParameterValues response: ${values.length} parameter(s)`,
+      values.length <= 5 ? JSON.stringify(values) : undefined,
+    );
+    return values;
   }
 }
 
@@ -32,7 +39,6 @@ export class SetParameterValuesHandler {
     );
     this.eventBus?.emit('cwmp.command', { method: 'SetParameterValues', parameters: params.map((p) => p.name) });
     await this.parameterTree.setParameterValues(deviceId, params);
-    await this.parameterTree.syncFromDomainModels(deviceId);
   }
 }
 
@@ -46,7 +52,55 @@ export class GetParameterNamesHandler {
   async handle(deviceId: string, path: string, nextLevel: boolean) {
     await this.logService.log(deviceId, 'ACS_COMMAND', `GetParameterNames: ${path} nextLevel=${nextLevel}`);
     this.eventBus?.emit('cwmp.command', { method: 'GetParameterNames', parameters: [path] });
-    return await this.parameterTree.getParameterNames(deviceId, path, nextLevel);
+    const names = await this.parameterTree.getParameterNames(deviceId, path, nextLevel);
+    await this.logService.log(
+      deviceId,
+      'ACS_COMMAND',
+      `GetParameterNames response: ${names.length} name(s) under ${path}`,
+    );
+    return names;
+  }
+}
+
+export class GetRpcMethodsHandler {
+  constructor(
+    private readonly parameterTree: ParameterTreeService,
+    private readonly logService: LogService,
+    private readonly eventBus?: EventEmitter,
+  ) {}
+
+  handle(deviceId: string) {
+    this.logService.log(deviceId, 'ACS_COMMAND', 'GetRPCMethods');
+    this.eventBus?.emit('cwmp.command', { method: 'GetRPCMethods' });
+    return this.parameterTree.getSupportedRpcMethods();
+  }
+}
+
+export class AddObjectHandler {
+  constructor(
+    private readonly parameterTree: ParameterTreeService,
+    private readonly logService: LogService,
+    private readonly eventBus?: EventEmitter,
+  ) {}
+
+  async handle(deviceId: string, objectName: string) {
+    await this.logService.log(deviceId, 'ACS_COMMAND', `AddObject: ${objectName}`);
+    this.eventBus?.emit('cwmp.command', { method: 'AddObject', parameters: [objectName] });
+    return await this.parameterTree.addObject(deviceId, objectName);
+  }
+}
+
+export class DeleteObjectHandler {
+  constructor(
+    private readonly parameterTree: ParameterTreeService,
+    private readonly logService: LogService,
+    private readonly eventBus?: EventEmitter,
+  ) {}
+
+  async handle(deviceId: string, objectPath: string) {
+    await this.logService.log(deviceId, 'ACS_COMMAND', `DeleteObject: ${objectPath}`);
+    this.eventBus?.emit('cwmp.command', { method: 'DeleteObject', parameters: [objectPath] });
+    await this.parameterTree.deleteObject(deviceId, objectPath);
   }
 }
 

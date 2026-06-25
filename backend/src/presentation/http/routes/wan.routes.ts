@@ -24,6 +24,7 @@ const wanSchema = z.object({
   vlanPriority: z.number().int().optional(),
   natEnabled: z.boolean().optional(),
   natType: z.string().optional(),
+  enabled: z.boolean().optional(),
   ipv6Enabled: z.boolean().optional(),
   slaacEnabled: z.boolean().optional(),
   dhcpv6Enabled: z.boolean().optional(),
@@ -90,7 +91,7 @@ export function createWanRoutes(
       if (!device) return res.status(404).json({ error: 'Not Found' });
       const data = wanSchema.parse(req.body);
       await wanOperational.updateConfig(device.id, data);
-      await parameterTree.syncFromDomainModels(device.id);
+      await parameterTree.syncFromDomainModels(device.id, { notifyChange: true });
       await logService.log(device.id, 'PARAM_CHANGE', 'WAN configuration updated', JSON.stringify(data));
       res.json(await wanOperational.getDashboard(device.id));
     } catch (e) {
@@ -114,6 +115,7 @@ export function createWanRoutes(
       if (!device) return res.status(404).json({ error: 'Not Found' });
       const data = wanInterfaceSchema.parse(req.body);
       const created = await wanOperational.createInterface(device.id, data);
+      await parameterTree.syncFromDomainModels(device.id, { notifyChange: true });
       res.status(201).json(created);
     } catch (e) {
       next(e);
@@ -125,10 +127,24 @@ export function createWanRoutes(
       const device = await deviceRepo.findDefault();
       if (!device) return res.status(404).json({ error: 'Not Found' });
       if (req.params.id === 'primary') {
-        return res.status(400).json({ error: 'The default Internet WAN is managed in the Configuration tab.' });
+        return res.status(400).json({ error: 'The default Internet WAN is managed via configuration.' });
       }
       const data = wanInterfaceSchema.parse(req.body);
       const updated = await wanOperational.updateInterface(device.id, req.params.id, data);
+      await parameterTree.syncFromDomainModels(device.id, { notifyChange: true });
+      res.json(updated);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.patch('/interfaces/:id', async (req, res, next) => {
+    try {
+      const device = await deviceRepo.findDefault();
+      if (!device) return res.status(404).json({ error: 'Not Found' });
+      const { enabled } = z.object({ enabled: z.boolean() }).parse(req.body);
+      const updated = await wanOperational.setInterfaceEnabled(device.id, req.params.id, enabled);
+      await parameterTree.syncFromDomainModels(device.id, { notifyChange: true });
       res.json(updated);
     } catch (e) {
       next(e);
@@ -143,6 +159,7 @@ export function createWanRoutes(
         return res.status(400).json({ error: 'The default Internet WAN cannot be removed.' });
       }
       await wanOperational.deleteInterface(device.id, req.params.id);
+      await parameterTree.syncFromDomainModels(device.id, { notifyChange: true });
       res.status(204).end();
     } catch (e) {
       next(e);

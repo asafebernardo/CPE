@@ -5,6 +5,8 @@ import type { LogService } from '../../../application/services/LogService.js';
 import type { SecurityService } from '../../../application/services/SecurityService.js';
 import type { WifiSecurityValidator } from '../../../application/services/security/WifiSecurityValidator.js';
 import type { PrismaDeviceRepository } from '../../../infrastructure/database/repositories/PrismaDeviceRepository.js';
+import { prisma } from '../../../infrastructure/database/prisma.js';
+import type { WirelessInterfaceService } from '../../../application/services/WirelessInterfaceService.js';
 
 const wlanSchema = z.object({
   enabled: z.boolean(),
@@ -21,6 +23,7 @@ export function createWlanRoutes(
   logService: LogService,
   securityService: SecurityService,
   wifiValidator: WifiSecurityValidator,
+  wirelessService: WirelessInterfaceService,
 ) {
   const router = Router();
 
@@ -45,6 +48,17 @@ export function createWlanRoutes(
       }
       const data = wlanSchema.parse(req.body);
 
+      const steering = await prisma.bandSteeringConfig.findUnique({ where: { deviceId: device.id } });
+      if (steering?.enabled && !data.enabled) {
+        return res.status(400).json({
+          error: 'Bad Request',
+          message: 'Cannot disable Wi-Fi radios while band steering is enabled.',
+        });
+      }
+      if (steering?.enabled) {
+        data.enabled = true;
+      }
+
       const settings = await securityService.getSettings(device.id);
       const result = wifiValidator.validate(settings.securityProfile, data.security, data.password, data.enabled);
       if (!result.valid) {
@@ -52,6 +66,18 @@ export function createWlanRoutes(
       }
 
       const wlan = await deviceRepo.updateWlanConfig(device.id, band, data);
+      await wirelessService.syncPrimaryFromWlan(device.id, band, data);
+
+      if (steering?.enabled) {
+        const otherBand = band === '2.4' ? '5' : '2.4';
+        await deviceRepo.updateWlanConfig(device.id, otherBand, {
+          ssid: data.ssid,
+          security: data.security,
+          password: data.password,
+          enabled: true,
+        });
+      }
+
       await parameterTree.syncFromDomainModels(device.id);
       await logService.log(device.id, 'PARAM_CHANGE', `WLAN ${band} GHz updated`, JSON.stringify(data));
       res.json(wlan);

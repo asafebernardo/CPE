@@ -17,6 +17,7 @@ interface WanState {
   createInterface: (input: WanInterfaceInput) => Promise<void>;
   updateInterface: (id: string, input: WanInterfaceInput) => Promise<void>;
   deleteInterface: (id: string) => Promise<void>;
+  toggleInterfaceEnabled: (id: string, enabled: boolean) => Promise<void>;
 }
 
 export const useWanStore = create<WanState>((set, get) => ({
@@ -63,6 +64,12 @@ export const useWanStore = create<WanState>((set, get) => ({
   deleteInterface: async (id) => {
     await api.delete(`/wan/interfaces/${id}`);
     await get().fetchInterfaces();
+  },
+
+  toggleInterfaceEnabled: async (id, enabled) => {
+    await api.patch(`/wan/interfaces/${id}`, { enabled });
+    await get().fetchInterfaces();
+    if (id === 'primary') await get().fetch();
   },
 
   setFromPayload: (partial) => {

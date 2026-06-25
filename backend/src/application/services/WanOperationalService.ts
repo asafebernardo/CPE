@@ -68,7 +68,7 @@ export class WanOperationalService {
 
     if (!wanRow) throw new Error('WAN config not found');
 
-    const connected = wanRow.status === 'connected';
+    const connected = wanRow.enabled && wanRow.status === 'connected';
     const connectedSince = wanRow.connectedSince ?? new Date(Date.now() - 86400 * 1000);
     const uptimeSeconds = connected
       ? Math.floor((Date.now() - connectedSince.getTime()) / 1000)
@@ -182,7 +182,7 @@ export class WanOperationalService {
   async tickStats(deviceId: string): Promise<WanStatsPayload> {
     const counters = this.getCounters(deviceId);
     const wanRow = await prisma.wanConfig.findUnique({ where: { deviceId } });
-    const connected = wanRow?.status === 'connected';
+    const connected = wanRow?.enabled && wanRow?.status === 'connected';
 
     if (connected) {
       counters.rxBytes += Math.floor(50_000 + Math.random() * 120_000);
@@ -232,6 +232,14 @@ export class WanOperationalService {
     if (data.vlanPriority !== undefined) wanUpdate.vlanPriority = data.vlanPriority;
     if (data.natEnabled !== undefined) wanUpdate.natEnabled = data.natEnabled;
     if (data.natType) wanUpdate.natType = data.natType;
+    if (data.enabled !== undefined) {
+      wanUpdate.enabled = data.enabled;
+      wanUpdate.status = data.enabled ? 'connected' : 'disconnected';
+      if (data.enabled) {
+        wanUpdate.connectedSince = new Date();
+        wanUpdate.lastReconnect = new Date();
+      }
+    }
 
     if (data.ipv6Enabled !== undefined) ipv6Update.wanEnabled = data.ipv6Enabled;
     if (data.slaacEnabled !== undefined) ipv6Update.slaacEnabled = data.slaacEnabled;
@@ -357,7 +365,7 @@ export class WanOperationalService {
         name: 'Internet (WAN1)',
         serviceType: 'INTERNET',
         connectionType: primaryRow.connectionType as WanConnectionType,
-        enabled: true,
+        enabled: primaryRow.enabled,
         isDefault: true,
         ipAddress: primaryRow.ipAddress,
         subnetMask: primaryRow.subnetMask,
@@ -369,7 +377,9 @@ export class WanOperationalService {
         vlanId: primaryRow.vlanId,
         natEnabled: primaryRow.natEnabled,
         pppoeUsername: primaryRow.pppoeUsername ?? '',
-        status: (primaryRow.status === 'connected' ? 'connected' : 'disconnected') as WanLinkStatus,
+        status: (!primaryRow.enabled
+          ? 'disconnected'
+          : primaryRow.status === 'connected' ? 'connected' : 'disconnected') as WanLinkStatus,
       });
     }
 
@@ -448,6 +458,59 @@ export class WanOperationalService {
       await this.logService.log(deviceId, 'PARAM_CHANGE', `WAN interface removed: ${existing.name}`);
     }
     await this.addHistory(deviceId, 'WAN Interface Removed', existing.name);
+  }
+
+  async setInterfaceEnabled(deviceId: string, id: string, enabled: boolean): Promise<WanInterfaceDto> {
+    if (id === 'primary') {
+      await prisma.wanConfig.update({
+        where: { deviceId },
+        data: {
+          enabled,
+          status: enabled ? 'connected' : 'disconnected',
+          ...(enabled ? { connectedSince: new Date(), lastReconnect: new Date() } : {}),
+        },
+      });
+      if (this.logService) {
+        await this.logService.log(
+          deviceId,
+          'PARAM_CHANGE',
+          enabled ? 'Primary WAN interface enabled' : 'Primary WAN interface disabled',
+        );
+      }
+      await this.addHistory(
+        deviceId,
+        enabled ? 'WAN Connected' : 'WAN Disconnected',
+        `Primary WAN ${enabled ? 'enabled' : 'disabled'}`,
+      );
+      const interfaces = await this.listInterfaces(deviceId);
+      const primary = interfaces.find((i) => i.isDefault);
+      if (!primary) throw new Error('Primary WAN not found');
+      return primary;
+    }
+
+    const existing = await prisma.wanInterface.findFirst({ where: { id, deviceId } });
+    if (!existing) throw new Error('WAN interface not found');
+
+    const row = await prisma.wanInterface.update({
+      where: { id },
+      data: {
+        enabled,
+        status: enabled ? 'connected' : 'disconnected',
+      },
+    });
+    if (this.logService) {
+      await this.logService.log(
+        deviceId,
+        'PARAM_CHANGE',
+        `${row.name} ${enabled ? 'enabled' : 'disabled'}`,
+      );
+    }
+    await this.addHistory(
+      deviceId,
+      enabled ? 'WAN Connected' : 'WAN Disconnected',
+      `${row.name} ${enabled ? 'enabled' : 'disabled'}`,
+    );
+    return this.toInterfaceDto(row);
   }
 
   private toInterfaceDto(row: {

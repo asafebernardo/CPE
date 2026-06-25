@@ -14,7 +14,7 @@ import type { WifiSecurityMode } from './security.js';
 
 export type SecurityProfile = 'legacy' | 'isp-standard' | 'anatel';
 
-export type ComplianceBadge = 'Legacy' | 'Recommended' | 'Modern' | 'ANATEL Compliant';
+export type ComplianceBadge = 'Legacy' | 'Recommended' | 'Modern';
 
 export interface SecurityProfileMeta {
   id: SecurityProfile;
@@ -70,7 +70,7 @@ export const SECURITY_PROFILES: SecurityProfileMeta[] = [
     id: 'anatel',
     label: 'ANATEL Compliance',
     description: 'Aplica todas as restrições de segurança exigidas para homologação moderna (Ato nº 2436/2023).',
-    badge: 'ANATEL Compliant',
+    badge: 'Modern',
     allowedWifiModes: ['wpa2-psk-aes', 'wpa2-wpa3-mixed', 'wpa3-personal', 'wpa3-enterprise'],
     wifiPasswordComplexity: true,
     adminPasswordComplexity: true,
@@ -90,7 +90,7 @@ export function isWifiModeAllowed(profileId: string, modeId: WifiSecurityMode): 
 
 /** Compliance badge for a given Wi-Fi security mode. */
 export function wifiModeBadge(modeId: WifiSecurityMode): ComplianceBadge {
-  if (getSecurityProfile('anatel').allowedWifiModes.includes(modeId)) return 'ANATEL Compliant';
+  if (getSecurityProfile('anatel').allowedWifiModes.includes(modeId)) return 'Modern';
   if (getSecurityProfile('isp-standard').allowedWifiModes.includes(modeId)) return 'Recommended';
   return 'Legacy';
 }
@@ -99,7 +99,6 @@ export const COMPLIANCE_BADGE_COLORS: Record<ComplianceBadge, string> = {
   Legacy: '#f97316',
   Recommended: '#22c55e',
   Modern: '#06b6d4',
-  'ANATEL Compliant': '#3b82f6',
 };
 
 /* ============================================================

@@ -37,13 +37,39 @@ export class SoapBuilder {
   private wrapBody(body: Record<string, unknown>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(body)) {
-      if (Array.isArray(value)) {
+      if (key === 'MethodList' && Array.isArray(value)) {
+        result[key] = {
+          '@_soap-enc:arrayType': `xsd:string[${value.length}]`,
+          string: value,
+        };
+      } else if (key === 'ParameterList' && Array.isArray(value)) {
+        const isInfoStruct = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'writable' in value[0];
+        if (isInfoStruct) {
+          result[key] = {
+            '@_soap-enc:arrayType': `cwmp:ParameterInfoStruct[${value.length}]`,
+            ...(value.length > 0 ? { ParameterInfoStruct: value.map((item) => this.wrapValue(item)) } : {}),
+          };
+        } else {
+          result[key] = {
+            '@_soap-enc:arrayType': `cwmp:ParameterValueStruct[${value.length}]`,
+            ...(value.length > 0 ? { ParameterValueStruct: value.map((item) => this.wrapValue(item)) } : {}),
+          };
+        }
+      } else if (Array.isArray(value)) {
         result[key] = value.map((item) => this.wrapValue(item));
       } else {
-        result[key] = this.wrapValue(value);
+        result[key] = this.wrapScalarValue(key, value);
       }
     }
     return result;
+  }
+
+  /** Status and numeric CWMP fields use unsignedInt */
+  private wrapScalarValue(key: string, value: unknown): unknown {
+    if (key === 'Status' || key === 'InstanceNumber') {
+      return { '@_xsi:type': 'xsd:unsignedInt', '#text': String(value) };
+    }
+    return this.wrapValue(value);
   }
 
   private wrapValue(value: unknown): unknown {
@@ -56,6 +82,13 @@ export class SoapBuilder {
           Value: { '@_xsi:type': 'xsd:string', '#text': String(obj.value) },
         };
       }
+      if ('name' in obj && 'writable' in obj) {
+        const writable = obj.writable === true || obj.writable === 'true' || obj.writable === '1' || obj.writable === 1;
+        return {
+          Name: obj.name,
+          Writable: { '@_xsi:type': 'xsd:boolean', '#text': writable ? '1' : '0' },
+        };
+      }
       return this.wrapBody(obj);
     }
     return { '#text': String(value) };
@@ -63,40 +96,56 @@ export class SoapBuilder {
 
   buildInform(
     id: string,
-    deviceId: string,
+    serialNumber: string,
     events: Array<{ eventCode: string; commandKey?: string }>,
     parameters: Array<{ name: string; value: string }>,
+    deviceId?: { manufacturer?: string; oui?: string; productClass?: string },
   ): string {
     const eventStructs = events.map((e) => ({
-      EventStruct: {
-        EventCode: e.eventCode,
-        CommandKey: e.commandKey ?? '',
-      },
+      EventCode: e.eventCode,
+      CommandKey: e.commandKey ?? '',
     }));
 
     const paramStructs = parameters.map((p) => ({
-      ParameterValueStruct: {
-        Name: p.name,
-        Value: { '@_xsi:type': 'xsd:string', '#text': p.value },
-      },
+      Name: p.name,
+      Value: { '@_xsi:type': 'xsd:string', '#text': p.value },
     }));
 
-    return this.buildEnvelope('Inform', id, {
-      DeviceId: {
-        Manufacturer: 'RouterGui',
-        OUI: '001A2B',
-        ProductClass: 'RGX-5000',
-        SerialNumber: deviceId,
+    const envelope = {
+      'soap:Envelope': {
+        '@_xmlns:soap': 'http://schemas.xmlsoap.org/soap/envelope/',
+        '@_xmlns:soap-enc': 'http://schemas.xmlsoap.org/soap/encoding/',
+        '@_xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+        '@_xmlns:xsd': 'http://www.w3.org/2001/XMLSchema',
+        '@_xmlns:cwmp': CWMP_NAMESPACE,
+        'soap:Header': {
+          'cwmp:ID': { '@_soap:mustUnderstand': '1', '#text': id },
+        },
+        'soap:Body': {
+          'cwmp:Inform': {
+            DeviceId: {
+              Manufacturer: deviceId?.manufacturer ?? 'RouterGui',
+              OUI: deviceId?.oui ?? '001A2B',
+              ProductClass: deviceId?.productClass ?? 'RGX-5000',
+              SerialNumber: serialNumber,
+            },
+            Event: {
+              '@_soap-enc:arrayType': `cwmp:EventStruct[${events.length}]`,
+              EventStruct: eventStructs,
+            },
+            MaxEnvelopes: 1,
+            CurrentTime: new Date().toISOString(),
+            RetryCount: 0,
+            ParameterList: {
+              '@_soap-enc:arrayType': `cwmp:ParameterValueStruct[${parameters.length}]`,
+              ParameterValueStruct: paramStructs,
+            },
+          },
+        },
       },
-      Event: eventStructs,
-      MaxEnvelopes: 1,
-      CurrentTime: new Date().toISOString(),
-      RetryCount: 0,
-      ParameterList: {
-        '@_soap-enc:arrayType': `cwmp:ParameterValueStruct[${parameters.length}]`,
-        ParameterValueStruct: paramStructs.map((p) => p.ParameterValueStruct),
-      },
-    });
+    };
+
+    return builder.build(envelope);
   }
 }
 
@@ -131,8 +180,11 @@ export class SoapParser {
     const obj = body as Record<string, unknown>;
 
     for (const [key, value] of Object.entries(obj)) {
+      if (key.startsWith('@')) continue;
       if (value && typeof value === 'object' && '#text' in (value as object)) {
         result[key] = (value as { '#text': string })['#text'];
+      } else if (value && typeof value === 'object' && '#' in (value as object)) {
+        result[key] = (value as { '#': string })['#'];
       } else if (Array.isArray(value)) {
         result[key] = value;
       } else {
@@ -143,13 +195,33 @@ export class SoapParser {
   }
 
   extractParameterNames(body: Record<string, unknown>): string[] {
-    const list = body.ParameterNames as Array<{ Name?: string }> | { Name?: string } | undefined;
-    if (!list) return [];
-    if (Array.isArray(list)) return list.map((p) => p.Name ?? '').filter(Boolean);
-    if (typeof list === 'object' && 'Name' in list) {
-      const names = list.Name;
-      return Array.isArray(names) ? names : [names as string];
+    const list = body.ParameterNames;
+    if (list === undefined || list === null) return [];
+    return this.collectCwmpStringArray(list);
+  }
+
+  /** Unwrap IXC/ACS ParameterNames encodings (string array, SOAP-ENC array, single string). */
+  private collectCwmpStringArray(node: unknown): string[] {
+    if (typeof node === 'string') {
+      const trimmed = node.trim();
+      return trimmed ? [trimmed] : [];
     }
+
+    if (Array.isArray(node)) {
+      return node.flatMap((item) => this.collectCwmpStringArray(item));
+    }
+
+    if (typeof node === 'object' && node !== null) {
+      const obj = node as Record<string, unknown>;
+      if ('#text' in obj) {
+        const text = String(obj['#text']).trim();
+        return text ? [text] : [];
+      }
+      if ('string' in obj) return this.collectCwmpStringArray(obj.string);
+      if ('Name' in obj) return this.collectCwmpStringArray(obj.Name);
+      if ('ParameterPath' in obj) return this.collectCwmpStringArray(obj.ParameterPath);
+    }
+
     return [];
   }
 
@@ -162,21 +234,34 @@ export class SoapParser {
 
     const arr = Array.isArray(structs) ? structs : [structs];
     return arr.map((s: Record<string, unknown>) => ({
-      name: String(s.Name ?? ''),
-      value: this.extractValue(s.Value),
+      name: this.normalizeCwmpName(s.Name),
+      value: this.extractCwmpValue(s.Value),
     }));
+  }
+
+  private normalizeCwmpName(name: unknown): string {
+    if (Array.isArray(name)) return String(name[0] ?? '');
+    if (name && typeof name === 'object' && '#text' in (name as object)) {
+      return String((name as { '#text': unknown })['#text']);
+    }
+    return String(name ?? '');
+  }
+
+  private extractCwmpValue(value: unknown): string {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    if (typeof value === 'object') {
+      const obj = value as Record<string, unknown>;
+      if ('#text' in obj) return String(obj['#text']);
+      if ('#' in obj) return String(obj['#']);
+      if ('value' in obj) return String(obj.value);
+    }
+    return '';
   }
 
   extractSetParameters(body: Record<string, unknown>): Array<{ name: string; value: string }> {
     return this.extractParameterValues(body);
-  }
-
-  private extractValue(value: unknown): string {
-    if (!value) return '';
-    if (typeof value === 'string') return value;
-    if (typeof value === 'object' && '#text' in (value as object)) {
-      return String((value as { '#text': unknown })['#text']);
-    }
-    return String(value);
   }
 }

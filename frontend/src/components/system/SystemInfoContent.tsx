@@ -16,15 +16,11 @@ export function SystemInfoContent({
   firmware,
   ntp,
   message,
-  onReboot,
-  onFactoryReset,
 }: {
   device: DeviceInfoPanelDto;
   firmware: Record<string, unknown>;
   ntp: Record<string, unknown>;
   message?: string;
-  onReboot: () => void;
-  onFactoryReset: () => void;
 }) {
   const { settings, fetchAll, patchSettings, hashPreview } = useSecurityStore();
   const [preview, setPreview] = useState<string>('');
@@ -102,13 +98,6 @@ export function SystemInfoContent({
             </Grid>
           )}
         </Grid>
-      </FormSection>
-
-      <FormSection title="Device Management">
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant="outlined" color="warning" onClick={onReboot}>Reboot Device</Button>
-          <Button variant="outlined" color="error" onClick={onFactoryReset}>Factory Reset</Button>
-        </Box>
       </FormSection>
     </Box>
   );

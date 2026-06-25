@@ -7,7 +7,7 @@ import type { LoginResponse, PasswordHashAlgorithm } from '@routergui/shared';
 export class AuthService {
   async login(username: string, password: string): Promise<LoginResponse | null> {
     const user = await prisma.user.findUnique({ where: { username } });
-    if (!user || !(await verifyPassword(password, user.passwordHash))) {
+    if (!user || !user.enabled || !(await verifyPassword(password, user.passwordHash))) {
       return null;
     }
 
@@ -38,6 +38,20 @@ export class AuthService {
       where: { id: user.id },
       data: { passwordHash, mustChangePassword: false },
     });
+    if (user.role === 'ADMIN') {
+      const device = await prisma.virtualDevice.findFirst();
+      if (device) {
+        await prisma.webManagementConfig.upsert({
+          where: { deviceId: device.id },
+          create: {
+            deviceId: device.id,
+            adminUsername: user.username,
+            adminPassword: newPassword,
+          },
+          update: { adminUsername: user.username, adminPassword: newPassword },
+        });
+      }
+    }
     return { ok: true };
   }
 

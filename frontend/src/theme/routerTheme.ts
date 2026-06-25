@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { acsColors } from './colors';
+import { defaultColors as acsColors } from './themes/default/colors';
 
 export const routerTheme = createTheme({
   palette: {
@@ -175,7 +175,7 @@ export const routerTheme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         root: {
-          '&:hover': { backgroundColor: 'rgba(34, 211, 238, 0.04)' },
+          '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.03)' },
         },
       },
     },
@@ -208,11 +208,10 @@ export const routerTheme = createTheme({
           borderRadius: 8,
           margin: '2px 8px',
           '&.Mui-selected': {
-            backgroundColor: 'rgba(34, 211, 238, 0.12)',
-            borderLeft: `3px solid ${acsColors.accent}`,
-            '&:hover': { backgroundColor: 'rgba(34, 211, 238, 0.16)' },
+            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.08)' },
           },
-          '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.04)' },
+          '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.03)' },
         },
       },
     },

@@ -16,6 +16,7 @@ import {
   type PasswordHashAlgorithm,
   type SecurityProfile,
   type HashPreviewDto,
+  DEFAULT_ADMIN_PASSWORD,
 } from '@routergui/shared';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { generateCertificate } from '../../infrastructure/security/certificate.js';
@@ -177,11 +178,11 @@ export class SecurityService {
     }
 
     // ---- Admin password ----
-    const isDefaultAdmin = admin ? await verifyPassword('admin', admin.passwordHash) : false;
+    const isDefaultAdmin = admin ? await verifyPassword(DEFAULT_ADMIN_PASSWORD, admin.passwordHash) : false;
     let adminPasswordScore = 90;
     if (isDefaultAdmin) {
       adminPasswordScore = 10;
-      alerts.push({ id: 'admin-default', severity: 'critical', area: 'system', title: 'Default admin password', detail: 'The admin account still uses the default password "admin".' });
+      alerts.push({ id: 'admin-default', severity: 'critical', area: 'system', title: 'Default admin password', detail: 'The admin account still uses the factory default password.' });
     } else if (admin?.mustChangePassword) {
       adminPasswordScore = 40;
       alerts.push({ id: 'admin-change', severity: 'warning', area: 'system', title: 'Admin password change pending', detail: 'A password change is required on next login.' });

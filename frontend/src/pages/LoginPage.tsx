@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Card, CardContent, TextField, Button, Typography, Alert } from '@mui/material';
+import { PasswordField } from '../components/common/PasswordField';
 import { useAuthStore } from '../stores/authStore';
-import { RouterGuiLogo } from '../components/common/RouterGuiLogo';
-import { DEVICE_MODEL, DEVICE_MANUFACTURER } from '@routergui/shared';
+import { DEVICE_MODEL, DEVICE_MANUFACTURER, DEFAULT_ACCOUNT_PASSWORD } from '@routergui/shared';
 import { acsColors } from '../theme/colors';
 
 export function LoginPage() {
   const login = useAuthStore((s) => s.login);
   const navigate = useNavigate();
   const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin');
+  const [password, setPassword] = useState(DEFAULT_ACCOUNT_PASSWORD);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -44,14 +44,11 @@ export function LoginPage() {
         }}
       >
         <CardContent sx={{ p: 4 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-            <RouterGuiLogo height={56} />
-          </Box>
+          <Typography variant="h5" align="center" fontWeight={700} gutterBottom>
+            RouterGui
+          </Typography>
           <Typography variant="body2" align="center" color="text.secondary" gutterBottom>
             {DEVICE_MANUFACTURER} {DEVICE_MODEL}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', textAlign: 'center' }}>
-            Demo: user/user · tech/tech · admin/admin
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -63,10 +60,9 @@ export function LoginPage() {
               margin="normal"
               autoFocus
             />
-            <TextField
+            <PasswordField
               fullWidth
               label="Password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               margin="normal"

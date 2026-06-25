@@ -23,7 +23,8 @@ export interface WifiNeighborDto {
 
 export interface BandSteeringConfigDto {
   enabled: boolean;
-  rssiThreshold: number;
+  rssiThreshold24: number;
+  rssiThreshold5: number;
   prefer5G: boolean;
   clientSteering: boolean;
 }
@@ -105,6 +106,14 @@ export interface FirmwareInfoDto {
   pendingVersion?: string;
   lastUpgrade?: string;
   upgradeStatus: string;
+}
+
+export interface FirmwareUploadResult {
+  status: string;
+  message: string;
+  fileName: string;
+  fileSize: number;
+  targetVersion: string;
 }
 
 export interface NtpConfigDto {

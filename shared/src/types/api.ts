@@ -102,7 +102,7 @@ export interface FirewallRuleDto {
   id?: string;
   name: string;
   direction: 'inbound' | 'outbound';
-  protocol: 'TCP' | 'UDP' | 'ICMP' | 'ANY';
+  protocol: 'TCP' | 'UDP' | 'BOTH' | 'ICMP' | 'ANY';
   sourceIp: string;
   destIp: string;
   sourcePort: string;

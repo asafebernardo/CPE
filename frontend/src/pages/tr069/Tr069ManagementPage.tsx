@@ -4,9 +4,10 @@ import api from '../../services/api';
 import { PageHeader } from '../../components/common/PageHeader';
 import { FormSection } from '../../components/common/FormSection';
 import type { Tr069ManagementDto, CredentialEncryptionType } from '@routergui/shared';
-import { CREDENTIAL_ENCRYPTION_TYPES, getCredentialEncryption } from '@routergui/shared';
+import { CREDENTIAL_ENCRYPTION_TYPES, getCredentialEncryption, MIN_PERIODIC_INFORM_INTERVAL_SEC } from '@routergui/shared';
 import { acsColors } from '../../theme/colors';
 import { SecuritySelect } from '../../components/security/SecuritySelect';
+import { PasswordField } from '../../components/common/PasswordField';
 import { useSecurityStore } from '../../stores/securityStore';
 
 type LoadState = 'loading' | 'ready' | 'error';
@@ -36,7 +37,9 @@ async function fetchManagementData(): Promise<Tr069ManagementDto> {
       periodicInformEnabled: status.periodicInformEnabled ?? false,
       periodicInformInterval: status.periodicInformInterval ?? 300,
       cwmpVersion: '1.0',
-      connectionRequestUrl: '',
+      connectionRequestUrl: status.connectionRequestUrl ?? '',
+      connectionRequestBlocked: status.connectionRequestBlocked,
+      connectionRequestWarning: status.connectionRequestWarning,
       connectionRequestUsername: '',
       connectionRequestPassword: '',
       lastInform: status.lastInform ?? null,
@@ -49,7 +52,7 @@ async function fetchManagementData(): Promise<Tr069ManagementDto> {
   }
 }
 
-export function Tr069ManagementPage() {
+export function Tr069ManagementPage({ embedded = false }: { embedded?: boolean }) {
   const [data, setData] = useState<Tr069ManagementDto | null>(null);
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [errorMessage, setErrorMessage] = useState('');
@@ -84,6 +87,11 @@ export function Tr069ManagementPage() {
 
   const save = async () => {
     if (!data) return;
+    if (data.periodicInformInterval < MIN_PERIODIC_INFORM_INTERVAL_SEC) {
+      setErrorMessage(`Inform interval must be at least ${MIN_PERIODIC_INFORM_INTERVAL_SEC} seconds`);
+      return;
+    }
+    setErrorMessage('');
     await api.put('/acs/config', {
       url: data.url,
       username: data.username,
@@ -99,7 +107,9 @@ export function Tr069ManagementPage() {
   if (loadState === 'loading') {
     return (
       <Box>
-        <PageHeader title="ACS Configuration" subtitle="TR-069 CWMP management server settings and session status." />
+        {!embedded && (
+          <PageHeader title="ACS Configuration" subtitle="TR-069 CWMP management server settings and session status." />
+        )}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, color: acsColors.textSecondary }}>
           <CircularProgress size={20} />
           Loading ACS configuration...
@@ -111,7 +121,9 @@ export function Tr069ManagementPage() {
   if (loadState === 'error' || !data) {
     return (
       <Box>
-        <PageHeader title="ACS Configuration" subtitle="TR-069 CWMP management server settings and session status." />
+        {!embedded && (
+          <PageHeader title="ACS Configuration" subtitle="TR-069 CWMP management server settings and session status." />
+        )}
         <Alert severity="error" sx={{ mb: 2 }}>
           {errorMessage || 'Unable to load ACS configuration. Ensure the backend is running on port 3001.'}
         </Alert>
@@ -122,15 +134,34 @@ export function Tr069ManagementPage() {
 
   return (
     <Box>
-      <PageHeader title="ACS Configuration" subtitle="TR-069 CWMP management server settings and session status." />
+      {!embedded && (
+        <PageHeader title="ACS Configuration" subtitle="TR-069 CWMP management server settings and session status." />
+      )}
       {saved && <Alert severity="success" sx={{ mb: 2 }}>Configuration saved</Alert>}
+      {errorMessage && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErrorMessage('')}>{errorMessage}</Alert>}
       <FormSection title="Management Server">
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}><TextField fullWidth label="ACS URL" value={data.url} onChange={(e) => setData({ ...data, url: e.target.value })} /></Grid>
           <Grid item xs={12} md={3}><TextField fullWidth label="Username" value={data.username} onChange={(e) => setData({ ...data, username: e.target.value })} /></Grid>
-          <Grid item xs={12} md={3}><TextField fullWidth label="Password" type="password" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} /></Grid>
+          <Grid item xs={12} md={3}><PasswordField fullWidth label="Password" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} /></Grid>
           <Grid item xs={12}><FormControlLabel control={<Switch checked={data.periodicInformEnabled} onChange={(e) => setData({ ...data, periodicInformEnabled: e.target.checked })} />} label="Periodic Inform" /></Grid>
-          <Grid item xs={12} md={4}><TextField fullWidth label="Inform Interval (s)" type="number" value={data.periodicInformInterval} onChange={(e) => setData({ ...data, periodicInformInterval: parseInt(e.target.value) })} /></Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              label="Inform Interval (s)"
+              type="number"
+              value={data.periodicInformInterval}
+              inputProps={{ min: MIN_PERIODIC_INFORM_INTERVAL_SEC, step: 1 }}
+              helperText={`Minimum ${MIN_PERIODIC_INFORM_INTERVAL_SEC}s`}
+              onChange={(e) => {
+                const raw = parseInt(e.target.value, 10);
+                const interval = Number.isFinite(raw)
+                  ? Math.max(MIN_PERIODIC_INFORM_INTERVAL_SEC, raw)
+                  : MIN_PERIODIC_INFORM_INTERVAL_SEC;
+                setData({ ...data, periodicInformInterval: interval });
+              }}
+            />
+          </Grid>
           <Grid item xs={12} md={4}><TextField fullWidth label="CWMP Version" value={data.cwmpVersion} disabled /></Grid>
           <Grid item xs={12} md={4}><TextField fullWidth label="ACS Status" value={data.acsStatus} disabled /></Grid>
         </Grid>
@@ -165,10 +196,15 @@ export function Tr069ManagementPage() {
       </FormSection>
 
       <FormSection title="Connection Request">
+        {data.connectionRequestBlocked && data.connectionRequestWarning && (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            {data.connectionRequestWarning}
+          </Alert>
+        )}
         <Grid container spacing={2}>
           <Grid item xs={12}><TextField fullWidth label="Connection Request URL" value={data.connectionRequestUrl} disabled /></Grid>
           <Grid item xs={12} md={6}><TextField fullWidth label="CR Username" value={data.connectionRequestUsername} disabled /></Grid>
-          <Grid item xs={12} md={6}><TextField fullWidth label="CR Password" type="password" value={data.connectionRequestPassword} disabled /></Grid>
+          <Grid item xs={12} md={6}><PasswordField fullWidth label="CR Password" value={data.connectionRequestPassword} disabled /></Grid>
         </Grid>
       </FormSection>
       <FormSection title="Session History">

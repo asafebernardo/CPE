@@ -1,27 +1,48 @@
 import type { IFirewallRepository } from '../../../domain/repositories/IFirewallRepository.js';
 import type { FirewallRule, PortForward, DmzConfig } from '@routergui/shared';
+import { isProtectedFirewallRule } from '@routergui/shared';
 import { prisma } from '../prisma.js';
 
 export class PrismaFirewallRepository implements IFirewallRepository {
   async getRules(deviceId: string): Promise<FirewallRule[]> {
     const rows = await prisma.firewallRule.findMany({ where: { deviceId } });
-    return rows.map((r) => ({
-      id: r.id,
-      deviceId: r.deviceId,
-      name: r.name,
-      direction: r.direction as FirewallRule['direction'],
-      protocol: r.protocol as FirewallRule['protocol'],
-      sourceIp: r.sourceIp,
-      destIp: r.destIp,
-      sourcePort: r.sourcePort,
-      destPort: r.destPort,
-      action: r.action as FirewallRule['action'],
-      enabled: r.enabled,
-    }));
+    return rows.map((r) => this.toRule(r));
   }
 
   async createRule(deviceId: string, data: Omit<FirewallRule, 'id' | 'deviceId'>): Promise<FirewallRule> {
     const row = await prisma.firewallRule.create({ data: { deviceId, ...data } });
+    return this.toRule(row);
+  }
+
+  async updateRule(deviceId: string, ruleId: string, data: Omit<FirewallRule, 'id' | 'deviceId'>): Promise<FirewallRule> {
+    const existing = await prisma.firewallRule.findFirst({ where: { id: ruleId, deviceId } });
+    if (!existing) throw new Error('Firewall rule not found');
+    const row = await prisma.firewallRule.update({ where: { id: ruleId }, data });
+    return this.toRule(row);
+  }
+
+  async deleteRule(deviceId: string, ruleId: string): Promise<void> {
+    const existing = await prisma.firewallRule.findFirst({ where: { id: ruleId, deviceId } });
+    if (!existing) throw new Error('Firewall rule not found');
+    if (isProtectedFirewallRule(existing)) {
+      throw new Error('HTTP and HTTPS firewall rules cannot be removed');
+    }
+    await prisma.firewallRule.deleteMany({ where: { id: ruleId, deviceId } });
+  }
+
+  private toRule(row: {
+    id: string;
+    deviceId: string;
+    name: string;
+    direction: string;
+    protocol: string;
+    sourceIp: string;
+    destIp: string;
+    sourcePort: string;
+    destPort: string;
+    action: string;
+    enabled: boolean;
+  }): FirewallRule {
     return {
       id: row.id,
       deviceId: row.deviceId,
@@ -37,26 +58,37 @@ export class PrismaFirewallRepository implements IFirewallRepository {
     };
   }
 
-  async deleteRule(deviceId: string, ruleId: string): Promise<void> {
-    await prisma.firewallRule.deleteMany({ where: { id: ruleId, deviceId } });
-  }
-
   async getPortForwards(deviceId: string): Promise<PortForward[]> {
     const rows = await prisma.portForward.findMany({ where: { deviceId } });
-    return rows.map((r) => ({
-      id: r.id,
-      deviceId: r.deviceId,
-      name: r.name,
-      externalPort: r.externalPort,
-      internalIp: r.internalIp,
-      internalPort: r.internalPort,
-      protocol: r.protocol as PortForward['protocol'],
-      enabled: r.enabled,
-    }));
+    return rows.map((r) => this.toPortForward(r));
   }
 
   async createPortForward(deviceId: string, data: Omit<PortForward, 'id' | 'deviceId'>): Promise<PortForward> {
     const row = await prisma.portForward.create({ data: { deviceId, ...data } });
+    return this.toPortForward(row);
+  }
+
+  async updatePortForward(deviceId: string, id: string, data: Omit<PortForward, 'id' | 'deviceId'>): Promise<PortForward> {
+    const existing = await prisma.portForward.findFirst({ where: { id, deviceId } });
+    if (!existing) throw new Error('Port forward rule not found');
+    const row = await prisma.portForward.update({ where: { id }, data });
+    return this.toPortForward(row);
+  }
+
+  async deletePortForward(deviceId: string, id: string): Promise<void> {
+    await prisma.portForward.deleteMany({ where: { id, deviceId } });
+  }
+
+  private toPortForward(row: {
+    id: string;
+    deviceId: string;
+    name: string;
+    externalPort: number;
+    internalIp: string;
+    internalPort: number;
+    protocol: string;
+    enabled: boolean;
+  }): PortForward {
     return {
       id: row.id,
       deviceId: row.deviceId,
@@ -67,10 +99,6 @@ export class PrismaFirewallRepository implements IFirewallRepository {
       protocol: row.protocol as PortForward['protocol'],
       enabled: row.enabled,
     };
-  }
-
-  async deletePortForward(deviceId: string, id: string): Promise<void> {
-    await prisma.portForward.deleteMany({ where: { id, deviceId } });
   }
 
   async getDmz(deviceId: string): Promise<DmzConfig | null> {

@@ -132,9 +132,9 @@ export function DashboardOverviewView({
       {/* Quick actions */}
       <QuickActions
         actions={[
-          { label: 'Wi-Fi Settings', icon: WifiIcon, onClick: () => navigate('/wifi') },
+          { label: 'Wi-Fi Settings', icon: WifiIcon, onClick: () => navigate('/wifi/networks') },
           { label: 'Connected Devices', icon: DevicesIcon, onClick: () => navigate('/hosts') },
-          { label: 'Diagnostics', icon: NetworkCheckIcon, onClick: () => navigate('/diagnostic') },
+          { label: 'Diagnostics', icon: NetworkCheckIcon, onClick: () => navigate('/diagnostics/ping') },
           { label: 'Reboot', icon: RestartAltIcon, onClick: onReboot, tone: 'warning' },
         ]}
       />

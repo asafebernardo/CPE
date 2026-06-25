@@ -11,6 +11,7 @@ import { FormSection } from '../components/common/FormSection';
 import { SecuritySelect } from '../components/security/SecuritySelect';
 import { SecurityLevelChip } from '../components/security/SecurityLevelChip';
 import { PasswordStrengthMeter } from '../components/security/PasswordStrengthMeter';
+import { PasswordField } from '../components/common/PasswordField';
 import { useSecurityStore } from '../stores/securityStore';
 import { useAuthStore } from '../stores/authStore';
 import {
@@ -179,7 +180,7 @@ export function SecurityCenterPage() {
                     <CardContent>
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                         <Typography variant="subtitle1" fontWeight={700}>{p.label}</Typography>
-                        {active && <Chip size="small" label="Active" sx={{ height: 20, fontSize: '0.65rem', bgcolor: `${acsColors.accent}22`, color: acsColors.accent, fontWeight: 700 }} />}
+                        {active && <Chip size="small" label="Active" sx={{ height: 20, fontSize: '0.65rem', bgcolor: acsColors.accentSoftStrong, color: acsColors.accent, fontWeight: 700 }} />}
                       </Box>
                       <Typography variant="body2" color="text.secondary">{p.description}</Typography>
                     </CardContent>
@@ -239,13 +240,13 @@ export function SecurityCenterPage() {
 
       <FormSection title="Admin Password">
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}><TextField fullWidth type="password" label="Current Password" value={pw.current} onChange={(e) => setPw({ ...pw, current: e.target.value })} /></Grid>
+          <Grid item xs={12} md={4}><PasswordField fullWidth label="Current Password" value={pw.current} onChange={(e) => setPw({ ...pw, current: e.target.value })} /></Grid>
           <Grid item xs={12} md={4}>
-            <TextField fullWidth type="password" label="New Password" value={pw.next} onChange={(e) => setPw({ ...pw, next: e.target.value })}
+            <PasswordField fullWidth label="New Password" value={pw.next} onChange={(e) => setPw({ ...pw, next: e.target.value })}
               error={Boolean(adminPolicy && !adminPolicy.valid)} />
             <PasswordStrengthMeter password={pw.next} />
           </Grid>
-          <Grid item xs={12} md={4}><TextField fullWidth type="password" label="Confirm New Password" value={pw.confirm} onChange={(e) => setPw({ ...pw, confirm: e.target.value })} /></Grid>
+          <Grid item xs={12} md={4}><PasswordField fullWidth label="Confirm New Password" value={pw.confirm} onChange={(e) => setPw({ ...pw, confirm: e.target.value })} /></Grid>
         </Grid>
         {pwError && <Alert severity="error" sx={{ mt: 2 }}>{pwError}</Alert>}
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>

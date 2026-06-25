@@ -1,10 +1,27 @@
 import { Router } from 'express';
 import type { ConfigBackupService } from '../../../application/services/ConfigBackupService.js';
+import type { DevicePresetService } from '../../../application/services/DevicePresetService.js';
 import type { ParameterTreeService } from '../../../application/services/ParameterTreeService.js';
 import type { LogService } from '../../../application/services/LogService.js';
 import type { SecurityService } from '../../../application/services/SecurityService.js';
 import type { PrismaDeviceRepository } from '../../../infrastructure/database/repositories/PrismaDeviceRepository.js';
 import type { InformScheduler } from '../../../infrastructure/cwmp/InformScheduler.js';
+import { getConnectionRequestInfo } from '../../../config/connectionRequest.js';
+
+import { z } from 'zod';
+import { DEVICE_PRESETS, clampPeriodicInformInterval } from '@routergui/shared';
+
+const acsConfigSchema = z.object({
+  url: z.string(),
+  username: z.string().optional(),
+  password: z.string().optional(),
+  periodicInformEnabled: z.boolean().optional(),
+  periodicInformInterval: z.coerce.number().int().min(10).optional(),
+});
+
+const applyPresetSchema = z.object({
+  presetId: z.enum(['factory-default', 'isp-home', 'bridge-mode', 'secure-guest']),
+});
 
 export function createManagementRoutes(
   backupService: ConfigBackupService,
@@ -13,6 +30,7 @@ export function createManagementRoutes(
   logService: LogService,
   informScheduler: InformScheduler,
   securityService: SecurityService,
+  devicePresetService: DevicePresetService,
 ) {
   const router = Router();
 
@@ -68,39 +86,28 @@ export function createManagementRoutes(
     try {
       const device = await deviceRepo.findDefault();
       if (!device) return res.status(404).json({ error: 'Not Found' });
-      await deviceRepo.updateWanConfig(device.id, {
-        connectionType: 'DHCP',
-        ipAddress: '192.0.2.10',
-        subnetMask: '255.255.255.0',
-        gateway: '192.0.2.1',
-        dnsPrimary: '8.8.8.8',
-        dnsSecondary: '8.8.4.4',
-      });
-      await deviceRepo.updateLanConfig(device.id, {
-        ipAddress: '192.168.1.1',
-        subnetMask: '255.255.255.0',
-        dhcpEnabled: true,
-        dhcpRangeStart: '192.168.1.100',
-        dhcpRangeEnd: '192.168.1.200',
-      });
-
-      const factoryRow = await securityService.getSettingsRow(device.id);
-      if (factoryRow.factorySsid && factoryRow.factoryWifiPassword) {
-        const bands: Array<'2.4' | '5'> = ['2.4', '5'];
-        for (const band of bands) {
-          await deviceRepo.updateWlanConfig(device.id, band, {
-            ssid: factoryRow.factorySsid,
-            password: factoryRow.factoryWifiPassword,
-            security: 'wpa2-psk-aes',
-          });
-        }
-      }
-
-      await parameterTree.syncFromDomainModels(device.id);
-      await deviceRepo.resetMetrics(device.id);
-      await logService.log(device.id, 'SYSTEM', 'Factory reset completed — Wi-Fi credentials restored');
-      res.json({ success: true, ssid: factoryRow.factorySsid });
+      const result = await devicePresetService.apply(device.id, 'factory-default');
+      res.json({ ...result, ssid: (await securityService.getSettingsRow(device.id)).factorySsid });
     } catch (e) {
+      next(e);
+    }
+  });
+
+  router.get('/presets', (_req, res) => {
+    res.json(DEVICE_PRESETS);
+  });
+
+  router.post('/apply-preset', async (req, res, next) => {
+    try {
+      const device = await deviceRepo.findDefault();
+      if (!device) return res.status(404).json({ error: 'Not Found' });
+      const { presetId } = applyPresetSchema.parse(req.body);
+      const result = await devicePresetService.apply(device.id, presetId);
+      res.json(result);
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('Unknown')) {
+        return res.status(400).json({ error: 'Bad Request', message: e.message });
+      }
       next(e);
     }
   });
@@ -113,6 +120,7 @@ export function createAcsRoutes(
   cwmpClient: { runSession: (deviceId: string, events: Array<{ eventCode: string }>) => Promise<void> },
   informScheduler: InformScheduler,
   logService: LogService,
+  parameterTree: ParameterTreeService,
 ) {
   const router = Router();
 
@@ -122,6 +130,7 @@ export function createAcsRoutes(
       if (!device) return res.status(404).json({ error: 'Not Found' });
       const { prisma } = await import('../../../infrastructure/database/prisma.js');
       const session = await prisma.cwmpSession.findUnique({ where: { deviceId: device.id } });
+      const cr = getConnectionRequestInfo();
       res.json({
         url: session?.acsUrl ?? '',
         configured: Boolean(session?.acsUrl),
@@ -130,6 +139,9 @@ export function createAcsRoutes(
         sessionState: session?.sessionState ?? 'idle',
         periodicInformEnabled: session?.periodicInformEnabled ?? false,
         periodicInformInterval: session?.periodicInformInterval ?? 300,
+        connectionRequestUrl: cr.url,
+        connectionRequestBlocked: cr.blocked,
+        connectionRequestWarning: cr.warning,
       });
     } catch (e) {
       next(e);
@@ -141,22 +153,26 @@ export function createAcsRoutes(
       const device = await deviceRepo.findDefault();
       if (!device) return res.status(404).json({ error: 'Not Found' });
       const { prisma } = await import('../../../infrastructure/database/prisma.js');
-      const { url, username, password, periodicInformEnabled, periodicInformInterval } = req.body;
+      const { url, username, password, periodicInformEnabled, periodicInformInterval } = acsConfigSchema.parse(req.body);
       const current = await prisma.cwmpSession.findUnique({ where: { deviceId: device.id } });
       const urlChanged = current?.acsUrl !== url;
+      const interval = periodicInformInterval !== undefined
+        ? clampPeriodicInformInterval(periodicInformInterval)
+        : current?.periodicInformInterval ?? 300;
       await prisma.cwmpSession.update({
         where: { deviceId: device.id },
         data: {
           acsUrl: url,
           acsUsername: username ?? '',
           acsPassword: password ?? '',
-          periodicInformEnabled,
-          periodicInformInterval,
+          periodicInformEnabled: periodicInformEnabled ?? current?.periodicInformEnabled ?? true,
+          periodicInformInterval: interval,
           // Re-announce (0 BOOTSTRAP) when pointed at a different ACS.
           ...(urlChanged ? { bootstrapSent: false } : {}),
         },
       });
       await informScheduler.restart(device.id);
+      await parameterTree.syncFromDomainModels(device.id);
       await logService.log(device.id, 'PARAM_CHANGE', 'ACS configuration updated', url);
       res.json({ success: true });
     } catch (e) {
@@ -175,8 +191,15 @@ export function createAcsRoutes(
     }
   });
 
-  router.post('/connection-request', async (_req, res) => {
-    res.json({ success: true, message: 'Connection request simulated' });
+  router.post('/connection-request', async (_req, res, next) => {
+    try {
+      const device = await deviceRepo.findDefault();
+      if (!device) return res.status(404).json({ error: 'Not Found' });
+      await cwmpClient.runSession(device.id, [{ eventCode: '6 CONNECTION REQUEST' }]);
+      res.json({ success: true, message: 'Connection request session completed' });
+    } catch (e) {
+      next(e);
+    }
   });
 
   return router;

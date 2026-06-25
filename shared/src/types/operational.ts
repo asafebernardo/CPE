@@ -101,6 +101,8 @@ export interface Tr069ManagementDto {
   connectionRequestUrl: string;
   connectionRequestUsername: string;
   connectionRequestPassword: string;
+  connectionRequestBlocked?: boolean;
+  connectionRequestWarning?: string;
   lastInform: string | null;
   nextInform: string | null;
   lastBoot: string | null;

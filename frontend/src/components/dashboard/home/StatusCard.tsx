@@ -41,7 +41,7 @@ export function StatusCard({ title, icon: Icon, tone, statusLabel, rows }: Statu
               width: 32,
               height: 32,
               borderRadius: 1.5,
-              bgcolor: `${acsColors.accent}1A`,
+              bgcolor: acsColors.accentSoft,
             }}
           >
             <Icon sx={{ color: acsColors.accent, fontSize: 20 }} />

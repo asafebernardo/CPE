@@ -7,6 +7,7 @@ import {
   type AuditCheckDto,
   type AuditStatus,
   type SecurityProfile,
+  DEFAULT_ADMIN_PASSWORD,
 } from '@routergui/shared';
 import { prisma } from '../../../infrastructure/database/prisma.js';
 import { verifyPassword } from '../../../infrastructure/security/passwordHashing.js';
@@ -64,7 +65,7 @@ export class SecurityAuditService {
     });
 
     // Default admin password
-    const isDefaultAdmin = admin ? await verifyPassword('admin', admin.passwordHash) : false;
+    const isDefaultAdmin = admin ? await verifyPassword(DEFAULT_ADMIN_PASSWORD, admin.passwordHash) : false;
     checks.push({
       id: 'admin-default',
       label: 'Default admin credentials',

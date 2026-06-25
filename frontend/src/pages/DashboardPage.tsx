@@ -25,7 +25,6 @@ export function DashboardPage() {
   const { data, fetch } = useOperationalStore();
   const dashboardTab = useUiStore((s) => s.dashboardTab);
   const role = useAuthStore((s) => s.user?.role ?? 'USER');
-  const advancedMode = useUiStore((s) => s.advancedMode);
 
   const [wan, setWan] = useState<WanDashboardDto | null>(null);
   const [wlans, setWlans] = useState<WlanReadOnly[]>([]);
@@ -34,9 +33,9 @@ export function DashboardPage() {
   const [message, setMessage] = useState('');
 
   const showMac = role === 'TECHNICIAN' || role === 'ADMIN';
-  const showNetworkDetails = role === 'TECHNICIAN' || (role === 'ADMIN' && advancedMode);
+  const showNetworkDetails = role === 'ADMIN';
 
-  const activeTab = dashboardTab === 'network' && !advancedMode ? 'overview' : dashboardTab;
+  const activeTab = dashboardTab === 'network' && role !== 'ADMIN' ? 'overview' : dashboardTab;
   const tabConfig = DASHBOARD_TABS.find((t) => t.id === activeTab) ?? DASHBOARD_TABS[0];
 
   useEffect(() => {

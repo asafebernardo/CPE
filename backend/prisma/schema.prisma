@@ -12,6 +12,7 @@ model User {
   username           String   @unique
   passwordHash       String
   role               String   @default("USER")
+  enabled            Boolean  @default(true)
   mustChangePassword Boolean  @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -46,14 +47,16 @@ model VirtualDevice {
   speedTestResults  SpeedTestResult[]
   ipv6Config        Ipv6Config?
   guestWlan         GuestWlanConfig?
+  wirelessInterfaces WirelessInterface[]
   dhcpReservations  DhcpReservation[]
   staticRoutes      StaticRoute[]
   upnpConfig        UpnpConfig?
   qosRules          QosRule[]
   vpnConfig         VpnConfig?
   firmwareInfo      FirmwareInfo?
-  ntpConfig         NtpConfig?
-  opticalInfo       OpticalInfo?
+  ntpConfig             NtpConfig?
+  webManagementConfig   WebManagementConfig?
+  opticalInfo           OpticalInfo?
   voipLines         VoipLine[]
   securitySettings  SecuritySettings?
 }
@@ -98,9 +101,12 @@ model WanConfig {
   vlanPriority     Int      @default(0)
   natEnabled       Boolean  @default(true)
   natType          String   @default("NAT")
+  enabled          Boolean  @default(true)
   status           String   @default("connected")
   connectedSince   DateTime?
   lastReconnect    DateTime?
+  downloadBandwidthMbps Int @default(500)
+  uploadBandwidthMbps   Int @default(250)
 
   device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 }
@@ -140,6 +146,9 @@ model LanConfig {
   dhcpEnabled    Boolean @default(true)
   dhcpRangeStart String  @default("192.168.1.100")
   dhcpRangeEnd   String  @default("192.168.1.200")
+  dnsPrimary     String  @default("8.8.8.8")
+  dnsSecondary   String  @default("8.8.4.4")
+  dnsAuto        Boolean @default(true)
 
   device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 }
@@ -292,10 +301,11 @@ model WifiNeighbor {
 model BandSteeringConfig {
   id             String  @id @default(uuid())
   deviceId       String  @unique
-  enabled        Boolean @default(true)
-  rssiThreshold  Int     @default(-70)
-  prefer5G       Boolean @default(true)
-  clientSteering Boolean @default(true)
+  enabled           Boolean @default(true)
+  rssiThreshold24   Int     @default(-70)
+  rssiThreshold5    Int     @default(-65)
+  prefer5G          Boolean @default(true)
+  clientSteering    Boolean @default(true)
 
   device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 }
@@ -344,6 +354,41 @@ model GuestWlanConfig {
   band      String  @default("2.4")
 
   device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+}
+
+model WirelessInterface {
+  id                   String   @id @default(uuid())
+  deviceId             String
+  interfaceId          String
+  name                 String
+  interfaceType        String
+  band                 String
+  enabled              Boolean  @default(true)
+  hidden               Boolean  @default(false)
+  ssid                 String
+  channel              Int
+  channelWidth         String   @default("20MHz")
+  security             String   @default("wpa2-psk-aes")
+  password             String   @default("")
+  isolated             Boolean  @default(false)
+  vlanId               Int?
+  bandwidthLimitMbps   Int?
+  captivePortal        Boolean  @default(false)
+  scheduleEnabled      Boolean  @default(false)
+  scheduleStart        String?
+  scheduleEnd          String?
+  ipv4Enabled          Boolean  @default(true)
+  ipv6Enabled          Boolean  @default(true)
+  backhaulMode         String?
+  linkQuality          Int?
+  linkStatus           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceId, interfaceId])
+  @@index([deviceId, interfaceType])
 }
 
 model DhcpReservation {
@@ -421,10 +466,26 @@ model FirmwareInfo {
 }
 
 model NtpConfig {
-  id       String @id @default(uuid())
-  deviceId String @unique
-  server   String @default("pool.ntp.org")
-  timezone String @default("UTC")
+  id              String @id @default(uuid())
+  deviceId        String @unique
+  server          String @default("pool.ntp.org")
+  serverSecondary String @default("time.google.com")
+  timezone        String @default("UTC")
+
+  device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+}
+
+model WebManagementConfig {
+  id            String  @id @default(uuid())
+  deviceId      String  @unique
+  enabled       Boolean @default(true)
+  remoteAccess  Boolean @default(false)
+  remotePort    Int     @default(8080)
+  localPort     Int     @default(80)
+  httpsEnabled  Boolean @default(false)
+  httpsPort     Int     @default(443)
+  adminUsername String  @default("admin")
+  adminPassword String  @default("")
 
   device VirtualDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 }

@@ -1,5 +1,6 @@
 import type { CwmpClient } from './CwmpClient.js';
 import { prisma } from '../database/prisma.js';
+import { clampPeriodicInformInterval } from '@routergui/shared';
 
 export class InformScheduler {
   private timers: Map<string, ReturnType<typeof setInterval>> = new Map();
@@ -11,7 +12,7 @@ export class InformScheduler {
     const session = await prisma.cwmpSession.findUnique({ where: { deviceId } });
     if (!session?.periodicInformEnabled || !session.acsUrl) return;
 
-    const intervalMs = session.periodicInformInterval * 1000;
+    const intervalMs = clampPeriodicInformInterval(session.periodicInformInterval) * 1000;
     const timer = setInterval(async () => {
       try {
         await this.cwmpClient.runSession(deviceId, [{ eventCode: '2 PERIODIC' }]);

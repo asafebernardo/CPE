@@ -7,6 +7,7 @@ export interface IParameterRepository {
   findByPathPrefix(deviceId: string, prefix: string): Promise<Tr098ParameterEntity[]>;
   upsert(deviceId: string, path: string, value: string, writable?: boolean, type?: string): Promise<Tr098ParameterEntity>;
   bulkUpsert(deviceId: string, params: Array<{ path: string; value: string; writable?: boolean; type?: string }>): Promise<void>;
+  deleteByPathPrefix(deviceId: string, prefix: string): Promise<void>;
   deleteByDevice(deviceId: string): Promise<void>;
 }
 
@@ -16,6 +17,9 @@ export interface IParameterTreeService {
   setParameterValues(deviceId: string, params: CwmpParameterValue[]): Promise<void>;
   getParameterNames(deviceId: string, path: string, nextLevel: boolean): Promise<CwmpParameterInfo[]>;
   buildInformParameterList(deviceId: string): Promise<CwmpParameterValue[]>;
-  syncFromDomainModels(deviceId: string): Promise<void>;
-  syncToDomainModels(deviceId: string, changedPaths: string[]): Promise<void>;
+  syncFromDomainModels(deviceId: string, options?: { notifyChange?: boolean }): Promise<void>;
+  syncToDomainModels(deviceId: string, changes: CwmpParameterValue[]): Promise<void>;
+  addObject(deviceId: string, objectName: string): Promise<number>;
+  deleteObject(deviceId: string, objectPath: string): Promise<void>;
+  getSupportedRpcMethods(): string[];
 }

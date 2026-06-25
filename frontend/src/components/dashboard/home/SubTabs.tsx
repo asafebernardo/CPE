@@ -43,7 +43,7 @@ export function SubTabs<T extends string>({
               color: active ? acsColors.bgPrimary : acsColors.textSecondary,
               bgcolor: active ? acsColors.accent : 'transparent',
               transition: 'all 0.15s',
-              '&:hover': { bgcolor: active ? acsColors.accent : `${acsColors.accent}1A` },
+              '&:hover': { bgcolor: active ? acsColors.accent : acsColors.accentSoft },
             }}
           >
             {tab.label}

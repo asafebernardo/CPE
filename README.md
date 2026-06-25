@@ -27,7 +27,7 @@ pnpm dev
 - Backend API: http://localhost:3001/api
 - WebSocket: ws://localhost:3001/ws
 
-**Default login:** `admin` / `admin`
+**Default login:** `admin` / `RgX5000!Secure#2026` (same password for `user` and `tech` demo accounts)
 
 ## Project Structure
 
@@ -50,7 +50,22 @@ The backend implements a CWMP client supporting:
 - Reboot
 - FactoryReset
 
-Configure ACS URL via Management page or `InternetGatewayDevice.ManagementServer.URL`.
+Configure ACS URL via Network → TR-069 or `InternetGatewayDevice.ManagementServer.URL`.
+
+### IXC ACS / Connection Request
+
+The CPE reports `ConnectionRequestURL` on every Inform. **IXC blocks `localhost` and private IPs** (SSRF protection), so you must expose the backend with a **public URL**:
+
+1. Start a tunnel to port `3001`, e.g. `cloudflared tunnel --url http://localhost:3001` or `ngrok http 3001`
+2. Set in `backend/.env`:
+   ```
+   PUBLIC_BASE_URL=https://your-tunnel-host.example.com
+   ```
+3. Restart the backend and trigger a new Inform (save ACS config or reboot backend)
+
+The public endpoint is `PUBLIC_BASE_URL` + `/cwmp/connection-request` (no JWT; optional HTTP Digest via `CONNECTION_REQUEST_USERNAME` / `CONNECTION_REQUEST_PASSWORD`).
+
+Check the reported URL under **Network → TR-069 → Connection Request**.
 
 ## Documentation
 

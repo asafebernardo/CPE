@@ -70,6 +70,12 @@ export class PrismaParameterRepository implements IParameterRepository {
     }
   }
 
+  async deleteByPathPrefix(deviceId: string, prefix: string): Promise<void> {
+    await prisma.tr098Parameter.deleteMany({
+      where: { deviceId, path: { startsWith: prefix } },
+    });
+  }
+
   async deleteByDevice(deviceId: string): Promise<void> {
     await prisma.tr098Parameter.deleteMany({ where: { deviceId } });
   }

@@ -39,12 +39,18 @@ export function Sparkline({
       <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" width="100%" height="100%">
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.35" />
-            <stop offset="100%" stopColor={color} stopOpacity="0" />
+            <stop offset="0%" style={{ stopColor: color, stopOpacity: 0.35 }} />
+            <stop offset="100%" style={{ stopColor: color, stopOpacity: 0 }} />
           </linearGradient>
         </defs>
         <polygon points={area} fill={`url(#${gradId})`} />
-        <polyline points={line} fill="none" stroke={color} strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
+        <polyline
+          points={line}
+          fill="none"
+          style={{ stroke: color }}
+          strokeWidth="2.5"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
     </Box>
   );

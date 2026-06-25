@@ -7,7 +7,8 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import LockIcon from '@mui/icons-material/Lock';
+import { WanConfigDialog } from './WanConfigDialog';
+import { PasswordField } from '../common/PasswordField';
 import {
   WAN_SERVICE_TYPES,
   WAN_SERVICE_TYPES_COMBINED,
@@ -55,14 +56,28 @@ const serviceColor: Record<WanServiceType, string> = {
 };
 
 export function WanInterfacesPanel() {
-  const { interfaces, interfacesLoading, fetchInterfaces, createInterface, updateInterface, deleteInterface } = useWanStore();
+  const {
+    interfaces,
+    interfacesLoading,
+    fetchInterfaces,
+    createInterface,
+    updateInterface,
+    deleteInterface,
+    toggleInterfaceEnabled,
+    fetch,
+  } = useWanStore();
+  const [configOpen, setConfigOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<WanInterfaceInput>(EMPTY_FORM);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
-  useEffect(() => { fetchInterfaces(); }, [fetchInterfaces]);
+  useEffect(() => {
+    fetchInterfaces();
+    fetch();
+  }, [fetchInterfaces, fetch]);
 
   const openCreate = () => {
     setEditingId(null);
@@ -120,6 +135,18 @@ export function WanInterfacesPanel() {
     }
   };
 
+  const handleToggleEnabled = async (iface: WanInterfaceDto, enabled: boolean) => {
+    setTogglingId(iface.id);
+    setError('');
+    try {
+      await toggleInterfaceEnabled(iface.id, enabled);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to update interface status');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -143,7 +170,7 @@ export function WanInterfacesPanel() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                {['Name', 'Service', 'Mode', 'IP Address', 'VLAN', 'Status', ''].map((h) => (
+                {['Name', 'Service', 'Mode', 'IP Address', 'VLAN', 'Enabled', 'Status', ''].map((h) => (
                   <TableCell key={h} sx={{ bgcolor: acsColors.bgSecondary, fontWeight: 600 }}>{h}</TableCell>
                 ))}
               </TableRow>
@@ -157,9 +184,7 @@ export function WanInterfacesPanel() {
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                         <Typography variant="body2" fontWeight={600}>{iface.name}</Typography>
                         {iface.isDefault && (
-                          <Tooltip title="Default Internet WAN — edit in Configuration tab">
-                            <Chip size="small" icon={<LockIcon sx={{ fontSize: '0.85rem !important' }} />} label="Default" sx={{ height: 20, fontSize: '0.65rem' }} />
-                          </Tooltip>
+                          <Chip size="small" label="Default" sx={{ height: 20, fontSize: '0.65rem' }} />
                         )}
                       </Box>
                     </TableCell>
@@ -174,6 +199,16 @@ export function WanInterfacesPanel() {
                     <TableCell sx={{ fontFamily: 'monospace' }}>{iface.ipAddress}</TableCell>
                     <TableCell>{iface.vlanEnabled ? iface.vlanId : '—'}</TableCell>
                     <TableCell>
+                      <Tooltip title={iface.enabled ? 'Disable interface' : 'Enable interface'}>
+                        <Switch
+                          size="small"
+                          checked={iface.enabled}
+                          disabled={togglingId === iface.id}
+                          onChange={(e) => handleToggleEnabled(iface, e.target.checked)}
+                        />
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                         <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: online ? acsColors.success : acsColors.textMuted }} />
                         <Typography variant="body2" sx={{ color: online ? acsColors.success : acsColors.textMuted }}>
@@ -183,7 +218,11 @@ export function WanInterfacesPanel() {
                     </TableCell>
                     <TableCell align="right">
                       {iface.isDefault ? (
-                        <Typography variant="caption" color="text.secondary">—</Typography>
+                        <Tooltip title="Edit WAN configuration">
+                          <IconButton size="small" onClick={() => setConfigOpen(true)}>
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                       ) : (
                         <>
                           <IconButton size="small" onClick={() => openEdit(iface)}><EditIcon fontSize="small" /></IconButton>
@@ -236,7 +275,7 @@ export function WanInterfacesPanel() {
             {form.connectionType === 'PPPoE' && (
               <>
                 <Grid item xs={12} md={6}><TextField fullWidth label="PPPoE Username" value={form.pppoeUsername} onChange={(e) => patch({ pppoeUsername: e.target.value })} /></Grid>
-                <Grid item xs={12} md={6}><TextField fullWidth type="password" label="PPPoE Password" value={form.pppoePassword} onChange={(e) => patch({ pppoePassword: e.target.value })} /></Grid>
+                <Grid item xs={12} md={6}><PasswordField fullWidth label="PPPoE Password" value={form.pppoePassword} onChange={(e) => patch({ pppoePassword: e.target.value })} /></Grid>
               </>
             )}
 
@@ -265,6 +304,8 @@ export function WanInterfacesPanel() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <WanConfigDialog open={configOpen} onClose={() => setConfigOpen(false)} />
     </Box>
   );
 }

@@ -4,6 +4,7 @@ import api from '../services/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { FormSection } from '../components/common/FormSection';
 import { DataTable } from '../components/common/DataTable';
+import { PasswordField } from '../components/common/PasswordField';
 
 export function SecurityAdvancedPage() {
   const [tab, setTab] = useState(0);
@@ -61,7 +62,7 @@ export function SecurityAdvancedPage() {
               <TextField fullWidth label="Username" value={vpn.username} onChange={(e) => setVpn({ ...vpn, username: e.target.value })} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextField fullWidth label="Password" type="password" value={vpn.password} onChange={(e) => setVpn({ ...vpn, password: e.target.value })} />
+              <PasswordField fullWidth label="Password" value={vpn.password} onChange={(e) => setVpn({ ...vpn, password: e.target.value })} />
             </Grid>
           </Grid>
           <Button sx={{ mt: 2 }} variant="contained" onClick={() => api.put('/cpe/vpn', vpn)}>Save VPN</Button>

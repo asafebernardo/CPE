@@ -4,7 +4,7 @@ import api from '../services/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { ProfessionalTable } from '../components/common/ProfessionalTable';
 
-export function RoutingPage() {
+export function RoutingPage({ embedded = false }: { embedded?: boolean }) {
   const [routes, setRoutes] = useState<Array<Record<string, unknown>>>([]);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export function RoutingPage() {
 
   return (
     <Box>
-      <PageHeader title="Routing" subtitle="Static routing table." />
+      {!embedded && <PageHeader title="Routing" subtitle="Static routing table." />}
       <ProfessionalTable
         columns={[
           { key: 'destination', label: 'Destination', sortable: true },

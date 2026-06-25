@@ -1,4 +1,4 @@
-export type WanTabId = 'overview' | 'interfaces' | 'configuration' | 'routes' | 'history';
+export type WanTabId = 'overview' | 'interfaces' | 'routes' | 'history';
 
 export interface WanTab {
   id: WanTabId;
@@ -8,7 +8,6 @@ export interface WanTab {
 export const WAN_TABS: WanTab[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'interfaces', label: 'Interfaces' },
-  { id: 'configuration', label: 'Configuration' },
   { id: 'routes', label: 'Routes & ACS' },
   { id: 'history', label: 'History' },
 ];

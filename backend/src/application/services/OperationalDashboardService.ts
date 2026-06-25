@@ -7,10 +7,10 @@ import type {
   PonStatusDto,
   ConnectedHostExtendedDto,
 } from '@routergui/shared';
-import { TR098_MANAGEMENT_SERVER } from '@routergui/shared';
 import type { IDeviceRepository } from '../../domain/repositories/IDeviceRepository.js';
 import type { ParameterTreeService } from './ParameterTreeService.js';
 import { prisma } from '../../infrastructure/database/prisma.js';
+import { getConnectionRequestInfo } from '../../config/connectionRequest.js';
 
 const VENDOR_MAP: Record<string, string> = {
   'AA:BB': 'RouterGui',
@@ -169,9 +169,7 @@ export class OperationalDashboardService {
         ? new Date(session.lastInform.getTime() + session.periodicInformInterval * 1000).toISOString()
         : null;
 
-    const crUrl = await prisma.tr098Parameter.findUnique({
-      where: { deviceId_path: { deviceId, path: TR098_MANAGEMENT_SERVER.CONNECTION_REQUEST_URL } },
-    });
+    const cr = getConnectionRequestInfo();
 
     return {
       url: session?.acsUrl ?? '',
@@ -180,9 +178,11 @@ export class OperationalDashboardService {
       periodicInformEnabled: session?.periodicInformEnabled ?? false,
       periodicInformInterval: session?.periodicInformInterval ?? 300,
       cwmpVersion: '1.0',
-      connectionRequestUrl: crUrl?.value ?? '',
-      connectionRequestUsername: '',
+      connectionRequestUrl: cr.url,
+      connectionRequestUsername: cr.username,
       connectionRequestPassword: '',
+      connectionRequestBlocked: cr.blocked,
+      connectionRequestWarning: cr.warning,
       lastInform: session?.lastInform?.toISOString() ?? null,
       nextInform,
       lastBoot,

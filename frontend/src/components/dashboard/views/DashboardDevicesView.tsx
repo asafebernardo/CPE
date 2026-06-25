@@ -42,7 +42,7 @@ export function DashboardDevicesView({
                 width: 32,
                 height: 32,
                 borderRadius: 1.5,
-                bgcolor: `${acsColors.accent}14`,
+                bgcolor: acsColors.accentSoft,
                 flexShrink: 0,
               }}
             >

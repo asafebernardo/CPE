@@ -57,7 +57,7 @@ export function DashboardInternetView({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
                 <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: online ? acsColors.success : acsColors.error, boxShadow: `0 0 8px ${online ? acsColors.success : acsColors.error}` }} />
                 <Typography variant="h6" fontWeight={700}>{online ? 'Connected' : 'Disconnected'}</Typography>
-                <Chip size="small" label={config?.connectionType ?? data.wan.connectionType} sx={{ ml: 'auto', bgcolor: `${acsColors.accent}1A`, color: acsColors.accent, fontWeight: 600 }} />
+                <Chip size="small" label={config?.connectionType ?? data.wan.connectionType} sx={{ ml: 'auto', bgcolor: acsColors.accentSoft, color: acsColors.accent, fontWeight: 600 }} />
               </Box>
               <Grid container spacing={2}>
                 {[

@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, A
 import { useAuthStore } from '../../stores/authStore';
 import { useSecurityStore } from '../../stores/securityStore';
 import { PasswordStrengthMeter } from './PasswordStrengthMeter';
+import { PasswordField } from '../common/PasswordField';
 import { validateAdminPasswordPolicy } from '@routergui/shared';
 
 /**
@@ -54,12 +55,12 @@ export function ForcePasswordChangeDialog() {
           For security reasons you must change the administrative password before continuing.
         </Alert>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-          <TextField type="password" label="Current Password" value={current} onChange={(e) => setCurrent(e.target.value)} fullWidth />
+          <PasswordField label="Current Password" value={current} onChange={(e) => setCurrent(e.target.value)} fullWidth />
           <Box>
-            <TextField type="password" label="New Password" value={next} onChange={(e) => setNext(e.target.value)} fullWidth />
+            <PasswordField label="New Password" value={next} onChange={(e) => setNext(e.target.value)} fullWidth />
             <PasswordStrengthMeter password={next} />
           </Box>
-          <TextField type="password" label="Confirm New Password" value={confirm} onChange={(e) => setConfirm(e.target.value)} fullWidth />
+          <PasswordField label="Confirm New Password" value={confirm} onChange={(e) => setConfirm(e.target.value)} fullWidth />
         </Box>
         {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
       </DialogContent>

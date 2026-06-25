@@ -78,3 +78,60 @@ export function buildDigestAuthHeader(
 
   return `Digest ${parts.join(', ')}`;
 }
+
+const CR_REALM = 'RouterGui';
+
+/**
+ * Builds a `WWW-Authenticate: Digest ...` challenge header for the CPE-side
+ * Connection Request endpoint. Returns the header and the issued nonce.
+ */
+export function buildDigestChallengeHeader(realm = CR_REALM): { header: string; nonce: string } {
+  const nonce = randomBytes(16).toString('hex');
+  const opaque = randomBytes(8).toString('hex');
+  const header = `Digest realm="${realm}", qop="auth", nonce="${nonce}", opaque="${opaque}", algorithm=MD5`;
+  return { header, nonce };
+}
+
+/** Parses an incoming `Authorization: Digest ...` header into a field map. */
+function parseDigestAuthorization(header: string): Record<string, string> | null {
+  if (!/^digest/i.test(header.trim())) return null;
+  const params = header.replace(/^digest\s*/i, '');
+  const result: Record<string, string> = {};
+  const regex = /(\w+)=(?:"([^"]*)"|([^,]*))/g;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(params)) !== null) {
+    result[match[1].toLowerCase()] = match[2] ?? match[3] ?? '';
+  }
+  return result;
+}
+
+/**
+ * Verifies an HTTP Digest `Authorization` header sent by the ACS against the
+ * expected Connection Request credentials. Validates the response hash for
+ * both qop="auth" and the legacy (no-qop) variant.
+ */
+export function verifyDigestAuthorization(
+  authHeader: string,
+  username: string,
+  password: string,
+  method: string,
+  realm = CR_REALM,
+): boolean {
+  const fields = parseDigestAuthorization(authHeader);
+  if (!fields) return false;
+  if (fields.username !== username) return false;
+  if (!fields.nonce || !fields.uri || !fields.response) return false;
+
+  const ha1 = md5(`${username}:${fields.realm || realm}:${password}`);
+  const ha2 = md5(`${method}:${fields.uri}`);
+
+  let expected: string;
+  if (fields.qop) {
+    if (!fields.nc || !fields.cnonce) return false;
+    expected = md5(`${ha1}:${fields.nonce}:${fields.nc}:${fields.cnonce}:${fields.qop}:${ha2}`);
+  } else {
+    expected = md5(`${ha1}:${fields.nonce}:${ha2}`);
+  }
+
+  return expected.toLowerCase() === fields.response.toLowerCase();
+}
